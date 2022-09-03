@@ -46,7 +46,7 @@ const TabDetails = ({fName,fStore,fLfile}) => {
     <Box>
       <TextField fullWidth sx={{ mb: 4 }} label='Site Name' placeholder='Lapaas' onChange = {(e) => setFname(e.target.value)} />
       <Typography variant='h6' sx={{ mb: 4 }}>
-        Upload Your Logo -- {fsrc}
+        Upload Your Logo
       </Typography>
       <DropzoneWrapper>
         <Grid className='match-height' xs={12}>

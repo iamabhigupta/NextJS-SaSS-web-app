@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState } from 'react'
+import axios from 'axios'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -13,6 +14,11 @@ import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import StepContent from '@mui/material/StepContent'
+
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 // ** Third Party Imports
 import clsx from 'clsx'
@@ -66,6 +72,44 @@ const StepperVerticalWithoutNumbers = () => {
     setActiveStep(0)
   }
 
+  const [category, setCategory] = useState('');
+
+  const handleChange = (e) => {
+    setCategory(e.target.value);
+
+    axios({
+      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      method: 'post',
+      data:{   
+    query: `
+    mutation {
+      productCategoryCreate(data: {
+          name: "${e.target.value}",
+          slug: "${e.target.value}",
+          status: Active,
+      }) {
+          id
+          name
+          slug
+          image
+          attributes {
+              id
+              name
+              status
+          }
+          status
+          created_at
+          updated_at
+      }
+  }  `    
+    },
+    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+      }).then((result) => {      
+        console.log(result)
+    })
+    
+  };
+
   return (
     <Card>
       <CardHeader title='Finish your store setup...' titleTypographyProps={{ variant: 'h6' }} />
@@ -105,13 +149,30 @@ const StepperVerticalWithoutNumbers = () => {
                   <div>
                     <Typography className='step-title'>Create Your First Category</Typography>
                     <Typography className='step-subtitle'>Enter Your Details</Typography>
+                
+         
                   </div>
                 </div>
               </StepLabel>
               <StepContent>
-                <Link target='_blank' href='/categories'>
+                {/* <Link target='_blank' href='/categories'>
                   <Button variant='contained'>Add Category</Button>
-                </Link>
+                </Link> */}
+ <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+      {/* <InputLabel id="demo-select-small">Category</InputLabel> */}
+      <Select
+        labelId="demo-select-small"
+        id="demo-select-small"
+        value={category}
+        // label="Age"
+        onChange={handleChange}
+      >
+      
+        <MenuItem value={'Groceries'}>Groceries</MenuItem>
+        <MenuItem value={'Mobile'}>Mobile</MenuItem>
+        <MenuItem value={'Laptop'}>Laptop</MenuItem>
+      </Select>
+    </FormControl>
                 <div className='button-wrapper'>
                   <Button
                     size='small'
