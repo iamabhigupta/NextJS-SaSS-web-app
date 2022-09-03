@@ -16,9 +16,11 @@ import Laravel from 'mdi-material-ui/Laravel'
 // ** Custom Avatar Component
 import CustomAvatar from 'src/@core/components/mui/avatar'
 
-const TabFramework = () => {
+const TabFramework = ({fEtype}) => {
   const [value, setValue] = useState('react')
   const [option, setOption] = useState('standard')
+  
+  fEtype(option)
 
   const BoxWrapper = styled(Box)(({ theme }) => ({
     borderWidth: 1,

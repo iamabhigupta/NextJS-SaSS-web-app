@@ -41,6 +41,7 @@ const UserDropdown = props => {
 
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
+  const userData = JSON.parse(window.localStorage.getItem('userData'))
 
   // ** Hooks
   const router = useRouter()
@@ -136,13 +137,13 @@ const UserDropdown = props => {
                 flexDirection: 'column'
               }}
             >
-              <Typography sx={{ fontWeight: 600 }}>John Doe</Typography>
-              <Typography
+              <Typography sx={{ fontWeight: 600 }}> { userData.name }</Typography>
+              {/* <Typography
                 variant='body2'
                 sx={{ fontSize: '0.8rem', color: 'text.disabled' }}
               >
                 Admin
-              </Typography>
+              </Typography> */}
             </Box>
           </Box>
         </Box>

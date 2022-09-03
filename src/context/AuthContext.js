@@ -65,7 +65,7 @@ const AuthProvider = ({ children }) => {
   const handleLogin = (params, errorCallback) => {
 
     axios({
-      url: 'http://127.0.0.1:3333/graphql',
+      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
       method: 'post',
       data: {
         query: `
@@ -97,7 +97,7 @@ const AuthProvider = ({ children }) => {
       window.localStorage.setItem(authConfig.storageTokenKeyName, result.data.data.login.token)
       console.log(result.data)
       axios
-      .get('http://127.0.0.1:3333/graphql', {
+      .get( process.env.NEXT_PUBLIC_API_ENDPOINT , {
         headers: {
           Authorization: window.localStorage.getItem(authConfig.storageTokenKeyName)
         }
@@ -122,7 +122,7 @@ const AuthProvider = ({ children }) => {
 
   const handleRegister = (params, errorCallback) => {
     axios
-      .post('http://127.0.0.1:3333/graphql', {
+      .post( process.env.NEXT_PUBLIC_API_ENDPOINT , {
         query: `
         mutation {
           userCreate(data: {

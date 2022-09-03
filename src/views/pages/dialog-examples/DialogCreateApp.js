@@ -1,5 +1,6 @@
 // ** React Imports
-import { useState, forwardRef } from 'react'
+import { useState, forwardRef ,useCallback} from 'react'
+import axios from 'axios'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -83,6 +84,44 @@ const DialogCreateApp = () => {
     setShow(false)
     setActiveTab('detailsTab')
   }
+
+  const [fname, setFname] = useState("")
+  const [fstore, setFstore] = useState("")
+  const [fetype, setFetype] = useState("")
+  const [stype, setFstype] = useState("")
+  const [ffile, setFfile] = useState([])
+  
+  const handleCreateSite = (params, errorCallback) => {
+
+
+    
+    axios({
+      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      method: 'post',
+      data:{    
+ 
+    query: `
+        mutation {
+          settingUpdateOrCreate(data:{site_name: "${params.name}", site_category: "${params.stype}", site_type: "${params.fstore}"}) {site_name, site_category, site_type}}
+          `
+        
+
+    }
+      }).then((result) => {
+      
+        console.log(result)
+
+    }).catch(err => {
+      if (errorCallback) errorCallback(err)
+    })
+  }
+
+
+
+
+
+
+
   const NextArrow = direction === 'ltr' ? ArrowRight : ArrowLeft
   const PreviousArrow = direction === 'ltr' ? ArrowLeft : ArrowRight
 
@@ -101,14 +140,27 @@ const DialogCreateApp = () => {
         >
           Previous
         </Button>
+        {ffile}
         <Button
           variant='contained'
           endIcon={activeTab === 'submitTab' ? <Check /> : <NextArrow />}
           color={activeTab === 'submitTab' ? 'success' : 'primary'}
-          onClick={() => {
+          onClick={() => {           
+
             if (activeTab !== 'submitTab') {
               setActiveTab(nextTab)
             } else {
+
+              // {fname} -- {fstore} -- {fetype} -- {stype}
+
+              handleCreateSite(
+                {
+                  name:fname,
+                  fstore:fstore,
+                  fetype:fetype,
+                  stype:stype,
+                }
+              )
               handleClose()
             }
           }}
@@ -226,15 +278,15 @@ const DialogCreateApp = () => {
                 />
               </TabList>
               <TabPanel value='detailsTab' sx={{ flexGrow: 1 }}>
-                <DialogTabDetails />
+                <DialogTabDetails fName = {text => setFname(text)} fStore = {text => setFstore(text)} fLfile = {text => setFfile(text)} />
                 {renderTabFooter()}
               </TabPanel>
               <TabPanel value='frameworkTab' sx={{ flexGrow: 1 }}>
-                <DialogTabFramework />
+                <DialogTabFramework fEtype = {text => setFetype(text)} />
                 {renderTabFooter()}
               </TabPanel>
               <TabPanel value='DatabaseTab' sx={{ flexGrow: 1 }}>
-                <DialogTabDatabase />
+                <DialogTabDatabase Fstype = {text => setFstype(text)} />
                 {renderTabFooter()}
               </TabPanel>
               {/* <TabPanel value='paymentTab' sx={{ flexGrow: 1 }}>

@@ -12,8 +12,10 @@ import Store from 'mdi-material-ui/Store'
 // ** Custom Avatar Component
 import CustomAvatar from 'src/@core/components/mui/avatar'
 
-const TabDatabase = () => {
+const TabDatabase = ({Fstype}) => {
   const [value, setValue] = useState('kirana')
+  
+  Fstype(value)
 
   const handleChange = event => {
     setValue(event.target.value)
