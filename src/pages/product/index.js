@@ -1,8 +1,10 @@
 // ** React Imports
 import { useState, useEffect, useCallback } from 'react'
+import axios from 'axios'
 
 // ** Next Import
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -46,6 +48,10 @@ import { fetchData, deleteUser } from 'src/store/apps/user'
 // ** Custom Components Imports
 import TableHeader from 'src/views/apps/user/list/TableHeader'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
+//import { rows } from 'src/@fake-db/table/product-list-data'
+
+
+
 
 // ** Vars
 const userRoleObj = {
@@ -75,24 +81,24 @@ const AvatarWithoutImageLink = styled(Link)(({ theme }) => ({
 
 // ** renders client column
 const renderClient = row => {
-  if (row.avatar.length) {
-    return (
-      <AvatarWithImageLink href={`/apps/user/view/${row.id}`}>
-        <CustomAvatar src={row.avatar} sx={{ mr: 3, width: 34, height: 34 }} />
-      </AvatarWithImageLink>
-    )
+  if (row.avatar) {
+    // return (
+    //   <AvatarWithImageLink href={`/apps/user/view/${row.id}`}>
+    //     <CustomAvatar src={row.avatar} sx={{ mr: 3, width: 34, height: 34 }} />
+    //   </AvatarWithImageLink>
+    // )
   } else {
-    return (
-      <AvatarWithoutImageLink href={`/apps/user/view/${row.id}`}>
-        <CustomAvatar
-          skin='light'
-          color={row.avatarColor || 'primary'}
-          sx={{ mr: 3, width: 34, height: 34, fontSize: '1rem' }}
-        >
-          {getInitials(row.fullName ? row.fullName : 'John Doe')}
-        </CustomAvatar>
-      </AvatarWithoutImageLink>
-    )
+    // return (
+    //   <AvatarWithoutImageLink href={`/apps/user/view/${row.id}`}>
+    //     <CustomAvatar
+    //       skin='light'
+    //       color={row.avatarColor || 'primary'}
+    //       sx={{ mr: 3, width: 34, height: 34, fontSize: '1rem' }}
+    //     >
+    //       {getInitials(row.fullName ? row.fullName : 'John Doe')}
+    //     </CustomAvatar>
+    //   </AvatarWithoutImageLink>
+    // )
   }
 }
 
@@ -172,7 +178,7 @@ const columns = [
   {
     flex: 0.2,
     minWidth: 230,
-    field: 'fullName',
+    field: 'name',
     headerName: 'Products',
     renderCell: ({ row }) => {
       const { id, fullName, username } = row
@@ -181,7 +187,7 @@ const columns = [
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {renderClient(row)}
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-            <Link href={`/apps/user/view/${id}`} passHref>
+            {/* <Link href={`/apps/user/view/${id}`} passHref>
               <Typography
                 noWrap
                 component='a'
@@ -190,12 +196,12 @@ const columns = [
               >
                 {fullName}
               </Typography>
-            </Link>
-            <Link href={`/apps/user/view/${id}`} passHref>
+            </Link> */}
+            {/* <Link href={`/apps/user/view/${id}`} passHref> */}
               <Typography noWrap component='a' variant='caption' sx={{ textDecoration: 'none' }}>
-                @{username}
+              {row.title}
               </Typography>
-            </Link>
+            {/* </Link> */}
           </Box>
         </Box>
       )
@@ -204,12 +210,12 @@ const columns = [
   {
     flex: 0.2,
     minWidth: 250,
-    field: 'email',
+    field: 'price',
     headerName: 'Price',
     renderCell: ({ row }) => {
       return (
         <Typography noWrap variant='body2'>
-          {row.email}
+          {row.price}
         </Typography>
       )
     }
@@ -260,14 +266,14 @@ const columns = [
       )
     }
   },
-  {
-    flex: 0.1,
-    minWidth: 90,
-    sortable: false,
-    field: 'actions',
-    headerName: 'Image',
-    renderCell: ({ row }) => <RowOptions id={row.id} />
-  }
+  // {
+  //   flex: 0.1,
+  //   minWidth: 90,
+  //   sortable: false,
+  //   field: 'actions',
+  //   headerName: 'Image',
+  //   renderCell: ({ row }) => <RowOptions id={row.id} />
+  // }
 ]
 
 const Product = () => {
@@ -278,6 +284,57 @@ const Product = () => {
   const [status, setStatus] = useState('')
   const [pageSize, setPageSize] = useState(10)
   const [addUserOpen, setAddUserOpen] = useState(false)
+  const router = useRouter()
+
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+
+    axios({
+      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      method: 'post',
+      data:{   
+    query: `
+    query {
+      productFindAll {
+          id,
+          category_id,
+          title,
+          short_description,
+          long_description,
+          html_content,
+          price,
+          discount,
+          country_of_origin,
+          medias {
+              id,
+              src
+          },
+          attributes {
+              name,
+              value
+          },
+          faqs {
+              id,
+              question,
+              answer,
+          },
+          stock,
+          status,
+          created_at,
+          updated_at
+      }
+  } `    
+    },
+    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+      }).then((result) => {      
+        console.log(result.data.data.productFindAll)
+        setRows(result.data.data.productFindAll)
+
+    })
+  
+  
+  }, []);
 
   // ** Hooks
   const dispatch = useDispatch()
@@ -386,7 +443,7 @@ const Product = () => {
           <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
           <DataGrid
             autoHeight
-            rows={store.data}
+            rows={rows}
             columns={columns}
             checkboxSelection
             pageSize={pageSize}

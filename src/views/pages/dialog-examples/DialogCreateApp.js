@@ -92,8 +92,6 @@ const DialogCreateApp = () => {
   const [ffile, setFfile] = useState([])
   
   const handleCreateSite = (params, errorCallback) => {
-
-
     
     axios({
       url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
@@ -140,7 +138,6 @@ const DialogCreateApp = () => {
         >
           Previous
         </Button>
-        {ffile}
         <Button
           variant='contained'
           endIcon={activeTab === 'submitTab' ? <Check /> : <NextArrow />}

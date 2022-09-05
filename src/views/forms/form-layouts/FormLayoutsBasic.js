@@ -36,7 +36,7 @@ import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
 import FileUploaderMultiple from '../form-elements/file-uploader/FileUploaderMultiple'
 
-const FormLayoutsBasic = () => {
+const FormLayoutsBasic = ({fName,fCatName,fPrice,fDprice,fPdesc}) => {
   // ** States
   const [values, setValues] = useState({
     password: '',
@@ -79,19 +79,19 @@ const FormLayoutsBasic = () => {
           <Grid container spacing={5}>
             <Grid item xs={12}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Name</Typography>
-              <TextField autoComplete='off' fullWidth placeholder='Enter product name' />
+              <TextField autoComplete='off' onChange = {(e) => fName(e.target.value)} fullWidth placeholder='Enter product name' />
             </Grid>
             <Grid item xs={12}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Category</Typography>
-              <TextField autoComplete='off' fullWidth placeholder='Enter category name' />
+              <TextField autoComplete='off' onChange = {(e) => fCatName(e.target.value)} fullWidth placeholder='Enter category name' />
             </Grid>
             <Grid item xs={6}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Price</Typography>
-              <TextField autoComplete='off' fullWidth placeholder='Enter price' />
+              <TextField autoComplete='off' onChange = {(e) => fPrice(e.target.value)} fullWidth placeholder='Enter price' />
             </Grid>
             <Grid item xs={6}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Discounted Price</Typography>
-              <TextField autoComplete='off' fullWidth placeholder='Enter discounted price' />
+              <TextField autoComplete='off' onChange = {(e) => fDprice(e.target.value)} fullWidth placeholder='Enter discounted price' />
             </Grid>
             <Grid item xs={6}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Veg / Non Veg / Egg</Typography>
@@ -115,7 +115,7 @@ const FormLayoutsBasic = () => {
             </Grid>
             <Grid item xs={12}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Description</Typography>
-              <TextField autoComplete='off' fullWidth placeholder='Enter product description' />
+              <TextField autoComplete='off' onChange = {(e) => fPdesc(e.target.value)} fullWidth placeholder='Enter product description' />
             </Grid>
             <Grid item xs={12}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Media (up to 5)</Typography>

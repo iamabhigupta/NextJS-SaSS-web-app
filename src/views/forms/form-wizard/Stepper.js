@@ -23,6 +23,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 // ** Third Party Imports
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
+import { useRouter } from 'next/router'
 
 // ** Custom Components Imports
 import StepperCustomDot from './StepperCustomDot'
@@ -54,6 +55,9 @@ const steps = [
 
 const StepperVerticalWithoutNumbers = () => {
   // ** States
+
+  const router = useRouter()
+
   const [activeStep, setActiveStep] = useState(0)
 
   // Handle Stepper
@@ -70,6 +74,11 @@ const StepperVerticalWithoutNumbers = () => {
 
   const handleReset = () => {
     setActiveStep(0)
+  }
+
+  const addProduct = () => {
+    router.push('/product/new')
+
   }
 
   const [category, setCategory] = useState('');
@@ -199,8 +208,8 @@ const StepperVerticalWithoutNumbers = () => {
                 </div>
               </StepLabel>
               <StepContent>
-                <Link target='_blank' href='/product/add-product/'>
-                  <Button variant='contained'>Add Product</Button>
+                <Link >
+                  <Button variant='contained' onClick={addProduct}>Add Product</Button>
                 </Link>
                 <div className='button-wrapper'>
                   <Button
