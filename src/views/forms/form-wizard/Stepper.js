@@ -164,16 +164,22 @@ const StepperVerticalWithoutNumbers = () => {
                 </div>
               </StepLabel>
               <StepContent>
+
                 {/* <Link target='_blank' href='/categories'>
                   <Button variant='contained'>Add Category</Button>
                 </Link> */}
+
  <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+
       {/* <InputLabel id="demo-select-small">Category</InputLabel> */}
+
       <Select
         labelId="demo-select-small"
         id="demo-select-small"
         value={category}
+
         // label="Age"
+        
         onChange={handleChange}
       >
       

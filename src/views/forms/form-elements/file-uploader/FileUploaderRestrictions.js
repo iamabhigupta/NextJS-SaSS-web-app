@@ -40,10 +40,13 @@ const HeadingTypography = styled(Typography)(({ theme }) => ({
 }))
 
 const FileUploaderRestrictions = ({fileSrc}) => {
+
   // ** State
   const [files, setFiles] = useState([])
   fileSrc(JSON.stringify(files))
+
   // console.log(files);
+  
   // ** Hooks
   const { getRootProps, getInputProps } = useDropzone({
     maxFiles: 2,

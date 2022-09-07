@@ -17,6 +17,7 @@ import Divider from '@mui/material/Divider';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 import { useRouter } from 'next/router'
@@ -149,6 +150,7 @@ const SelectCategory = () => {
         headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
           }).then((result) => {      
             console.log(result)
+           
             // router.push('/product')
     
         })

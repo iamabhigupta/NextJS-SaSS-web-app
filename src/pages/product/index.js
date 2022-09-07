@@ -48,7 +48,8 @@ import { fetchData, deleteUser } from 'src/store/apps/user'
 // ** Custom Components Imports
 import TableHeader from 'src/views/apps/user/list/TableHeader'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
-//import { rows } from 'src/@fake-db/table/product-list-data'
+
+// ** import { rows } from 'src/@fake-db/table/product-list-data'
 
 
 
@@ -266,6 +267,7 @@ const columns = [
       )
     }
   },
+ 
   // {
   //   flex: 0.1,
   //   minWidth: 90,
@@ -274,6 +276,7 @@ const columns = [
   //   headerName: 'Image',
   //   renderCell: ({ row }) => <RowOptions id={row.id} />
   // }
+  
 ]
 
 const Product = () => {
