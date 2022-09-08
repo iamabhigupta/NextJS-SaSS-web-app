@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 // ** Demo Components Imports
-import Email from 'src/views/apps/email/Email'
+import Email from 'src/views/apps/email/CategoryPopup'
 
 // const EmailApp = ({ folder }) => {
 //   return <Email folder={folder} />
@@ -31,9 +31,7 @@ import Email from 'src/views/apps/email/Email'
 // }
 
 const EmailApp = () => {
-
-  return 'j7';
-
+  return 'j7'
 }
 
 export default EmailApp

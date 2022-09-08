@@ -1,24 +1,23 @@
 import { useState } from 'react'
 import axios from 'axios'
 import Box from '@mui/material/Box'
+import CategoryPopup from 'src/views/apps/email/CategoryPopup'
 
 import Button from '@mui/material/Button'
 
 import Typography from '@mui/material/Typography'
 
-import Modal from '@mui/material/Modal';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
+import Modal from '@mui/material/Modal'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import Divider from '@mui/material/Divider'
 
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-
-// ** MUI Imports
+import FormGroup from '@mui/material/FormGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
 import Grid from '@mui/material/Grid'
 import { useRouter } from 'next/router'
 
@@ -58,54 +57,44 @@ const style = {
   bgcolor: 'background.paper',
   border: '2px solid #fff',
   boxShadow: 24,
-  p: 4,
-};
+  p: 4
+}
 
 const SelectCategory = () => {
-
   const router = useRouter()
 
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [open, setOpen] = useState(false)
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
 
-  const [fdata, setFdata] = useState([]);
+  const [fdata, setFdata] = useState([])
 
-
-  const handleChange = (e,val) => {
-    let isChecked = e.target.checked;
+  const handleChange = (e, val) => {
+    let isChecked = e.target.checked
     console.log(isChecked)
 
-
-    if(isChecked){
+    if (isChecked) {
       fdata.push(val)
-    console.log(fdata)
-    }else{
-
-          setFdata(current =>
+      console.log(fdata)
+    } else {
+      setFdata(current =>
         current.filter(fdata => {
-          return fdata.id !== val.id;
-        }),
-      );
-
-
-
+          return fdata.id !== val.id
+        })
+      )
     }
-
   }
 
-  const handleSubmit = () =>{
+  const handleSubmit = () => {
     console.log(fdata)
 
-     if(fdata.length > 0){
-           fdata.forEach((data, index) => {
-
-                
+    if (fdata.length > 0) {
+      fdata.forEach((data, index) => {
         axios({
-          url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+          url: process.env.NEXT_PUBLIC_API_ENDPOINT,
           method: 'post',
-          data:{   
-        query: `
+          data: {
+            query: `
         mutation {
           productCreate(data: {
               category_id: 1,
@@ -145,88 +134,84 @@ const SelectCategory = () => {
               created_at,
               updated_at
           }
-      } `    
-        },
-        headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
-          }).then((result) => {      
-            console.log(result)
-           
-            // router.push('/product')
-    
+      } `
+          },
+          headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
+        }).then(result => {
+          console.log(result)
         })
-
-           }
-           )}
+      })
+    }
 
     router.push('/product')
   }
-  
+
   return (
-   
-
-<div>
-
-<Grid container spacing={6} className='match-height'>
-      <Grid item xs={12} md={4} onClick={handleOpen}>
-        <CrmAward title1='Fruits &' title2='Vegetables' color='success' />
+    <div>
+      <Grid container spacing={6} className='match-height'>
+        <Grid item xs={12} md={4} onClick={handleOpen}>
+          <CrmAward title1='Fruits &' title2='Vegetables' color='success' />
+        </Grid>
+        <Grid item xs={12} md={4} onClick={handleOpen}>
+          <CrmAward title1='Grocery & ' title2='Essentials' color='warning' />
+        </Grid>
+        <Grid item xs={12} md={4} onClick={handleOpen}>
+          <CrmAward title1='Restaurants &' title2='Fast Food' color='error' />
+        </Grid>
       </Grid>
-      <Grid item xs={12} md={4} onClick={handleOpen}>
-        <CrmAward title1='Grocery & ' title2='Essentials' color='warning' />
-      </Grid>
-      <Grid item xs={12} md={4} onClick={handleOpen}>
-        <CrmAward title1='Restaurants &' title2='Fast Food' color='error' />
-      </Grid>
-    </Grid>
 
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby='modal-modal-title'
+        aria-describedby='modal-modal-description'
+      >
+        {/* <Box sx={style}>
+          <Typography id='modal-modal-title' variant='h6' component='h2'>
+            Dummy Readymade product data !
+          </Typography>
+          <Divider />
 
-<Modal
-  open={open}
-  onClose={handleClose}
-  aria-labelledby="modal-modal-title"
-  aria-describedby="modal-modal-description"
->
-  <Box sx={style}>
+          <nav aria-label='main mailbox folders'>
+            <List>
+              {rows.map((data, i) => {
+                return (
+                  <>
+                    <ListItem disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon>
+                          <FormGroup>
+                            <FormControlLabel
+                              control={<Checkbox />}
+                              label={data.title}
+                              value={data.id}
+                              onChange={e => handleChange(e, data)}
+                            />
+                          </FormGroup>
+                        </ListItemIcon>
+                      </ListItemButton>
+                    </ListItem>
+                    <Divider />
+                  </>
+                )
+              })}
+            </List>
+          </nav>
 
-  <Typography id="modal-modal-title" variant="h6" component="h2">
-      Dummy Readymade product data !
-    </Typography>
-    <Divider />
-
-  <nav aria-label="main mailbox folders">
-        <List>
-
-        {rows.map((data, i) => {
-                      return (
-          <><ListItem disablePadding>
-                          <ListItemButton>
-                            <ListItemIcon>
-
-                              <FormGroup>
-                                <FormControlLabel control={<Checkbox />} label={data.title} value={data.id} onChange={e => handleChange(e,data)} />
-                              </FormGroup>
-
-                            </ListItemIcon>
-
-                          </ListItemButton>
-                        </ListItem><Divider /></>
-        );
-      })}
-        </List>
-      </nav>
-   
-     
-      <Grid
-  container
-  direction="row"
-  justifyContent="right"
->
-     <Button variant="contained" item onClick={handleSubmit}>Submit</Button>
-</Grid>
-  </Box>
-
-
-</Modal>
-</div>
+          <Grid container direction='row' justifyContent='right'>
+            <Button variant='contained' item onClick={handleSubmit}>
+              Submit
+            </Button>
+          </Grid>
+        </Box> */}
+        <Box
+          onClose={handleClose}
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}
+        >
+          <CategoryPopup folder='inbox' />
+        </Box>
+      </Modal>
+    </div>
   )
 }
 

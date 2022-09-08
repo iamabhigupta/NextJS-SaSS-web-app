@@ -6,19 +6,29 @@ import axios from 'axios'
 import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Card from '@mui/material/Card'
+import Dialog from '@mui/material/Dialog'
 import Step from '@mui/material/Step'
 import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
 import Stepper from '@mui/material/Stepper'
 import StepLabel from '@mui/material/StepLabel'
 import CardHeader from '@mui/material/CardHeader'
+import List from '@mui/material/List'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import StepContent from '@mui/material/StepContent'
+import MuiAvatar from '@mui/material/Avatar'
+import Fab from '@mui/material/Fab'
+import ListItem from '@mui/material/ListItem'
+import DialogTitle from '@mui/material/DialogTitle'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemAvatar from '@mui/material/ListItemAvatar'
 
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import FormControl from '@mui/material/FormControl'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 
 // ** Third Party Imports
 import clsx from 'clsx'
@@ -31,6 +41,22 @@ import DialogCreateApp from 'src/views/pages/dialog-examples/DialogCreateApp'
 
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
+
+// ** Icons Imports
+import Plus from 'mdi-material-ui/Plus'
+import ArrowExpandAll from 'mdi-material-ui/ArrowExpandAll'
+import Close from 'mdi-material-ui/Close'
+
+// ** Custom Components Imports
+import CustomAvatar from 'src/@core/components/mui/avatar'
+
+const categories = [
+  'Restaurants & Hotels',
+  ' Kirana Store, FMCG & Grocery',
+  'Local & Online Services',
+  'Fresh Chicken, Fish, & Meat',
+  'Insurance & Financial Services'
+]
 
 const steps = [
   {
@@ -55,6 +81,16 @@ const steps = [
 
 const StepperVerticalWithoutNumbers = () => {
   // ** States
+  const [open, setOpen] = useState(false)
+
+  // const [selectedValue, setSelectedValue] = useState(categories[1])
+  const handleClickOpen = () => setOpen(true)
+  const handleDialogClose = () => setOpen(false)
+
+  const handleClose = value => {
+    setOpen(false)
+    setCategory(value)
+  }
 
   const router = useRouter()
 
@@ -78,19 +114,18 @@ const StepperVerticalWithoutNumbers = () => {
 
   const addProduct = () => {
     router.push('/product/new')
-
   }
 
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState('')
 
-  const handleChange = (e) => {
-    setCategory(e.target.value);
+  const handleChange = e => {
+    setCategory(e.target.value)
 
     axios({
-      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      url: process.env.NEXT_PUBLIC_API_ENDPOINT,
       method: 'post',
-      data:{   
-    query: `
+      data: {
+        query: `
     mutation {
       productCategoryCreate(data: {
           name: "${e.target.value}",
@@ -110,14 +145,13 @@ const StepperVerticalWithoutNumbers = () => {
           created_at
           updated_at
       }
-  }  `    
-    },
-    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
-      }).then((result) => {      
-        console.log(result)
+  }  `
+      },
+      headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
+    }).then(result => {
+      console.log(result)
     })
-    
-  };
+  }
 
   return (
     <Card>
@@ -158,36 +192,83 @@ const StepperVerticalWithoutNumbers = () => {
                   <div>
                     <Typography className='step-title'>Create Your First Category</Typography>
                     <Typography className='step-subtitle'>Enter Your Details</Typography>
-                
-         
                   </div>
                 </div>
               </StepLabel>
               <StepContent>
+                <div>
+                  {/* <Button variant='contained'>Select Category</Button> */}
+                  <TextField
+                    id='outlined-basic'
+                    size='small'
+                    placeholder='Select Category'
+                    onClick={handleClickOpen}
+                    value={category}
+                    onChange={handleChange}
+                  />
+
+                  {/* <Typography variant='subtitle1' sx={{ mb: 2 }}>
+        Selected: {selectedValue}
+      </Typography> */}
+                  <Dialog onClose={handleDialogClose} aria-labelledby='simple-dialog-title' open={open}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <DialogTitle id='simple-dialog-title'>Choose business category</DialogTitle>
+                      <div style={{ paddingRight: '30px', cursor: 'pointer' }}>
+                        <Close onClick={handleDialogClose} />
+                      </div>
+                      {/* <ListItemAvatar>
+            <MuiAvatar>
+              <Close  />
+            </MuiAvatar>
+          </ListItemAvatar> */}
+                    </div>
+                    <List sx={{ pt: 0, px: '0 !important' }}>
+                      {categories.map(category => (
+                        <ListItem key={category} disablePadding onClick={() => handleClose(category)}>
+                          <Box
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              paddingRight: '10rem',
+                              width: '100%'
+                            }}
+                          >
+                            <ListItemButton>
+                              <img
+                                src='https://mydukaan.s3.ap-south-1.amazonaws.com/grocery.jpg'
+                                alt=''
+                                style={{ width: 60, height: 60, borderRadius: '3px', marginRight: '12px' }}
+                              />
+                              <ListItemText primary={category} />
+                            </ListItemButton>
+                          </Box>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Dialog>
+                </div>
 
                 {/* <Link target='_blank' href='/categories'>
                   <Button variant='contained'>Add Category</Button>
                 </Link> */}
 
- <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                {/* <FormControl sx={{ m: 1, minWidth: 120 }} size='small'> */}
+                {/* <InputLabel id="demo-select-small">Category</InputLabel> */}
 
-      {/* <InputLabel id="demo-select-small">Category</InputLabel> */}
+                {/* <Select
+                    labelId='demo-select-small'
+                    id='demo-select-small'
+                    value={category}
+                    // label="Age"
 
-      <Select
-        labelId="demo-select-small"
-        id="demo-select-small"
-        value={category}
-
-        // label="Age"
-        
-        onChange={handleChange}
-      >
-      
-        <MenuItem value={'Groceries'}>Groceries</MenuItem>
-        <MenuItem value={'Mobile'}>Mobile</MenuItem>
-        <MenuItem value={'Laptop'}>Laptop</MenuItem>
-      </Select>
-    </FormControl>
+                    onChange={handleChange}
+                  >
+                    <MenuItem value={'Groceries'}>Groceries</MenuItem>
+                    <MenuItem value={'Mobile'}>Mobile</MenuItem>
+                    <MenuItem value={'Laptop'}>Laptop</MenuItem>
+                  </Select>
+                </FormControl> */}
                 <div className='button-wrapper'>
                   <Button
                     size='small'
@@ -214,8 +295,10 @@ const StepperVerticalWithoutNumbers = () => {
                 </div>
               </StepLabel>
               <StepContent>
-                <Link >
-                  <Button variant='contained' onClick={addProduct}>Add Product</Button>
+                <Link>
+                  <Button variant='contained' onClick={addProduct}>
+                    Add Product
+                  </Button>
                 </Link>
                 <div className='button-wrapper'>
                   <Button
