@@ -1,23 +1,35 @@
 // ** React Imports
 import { Fragment, useState } from 'react'
+import axios from 'axios'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import List from '@mui/material/List'
+import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import Input from '@mui/material/Input'
 import Avatar from '@mui/material/Avatar'
 import Divider from '@mui/material/Divider'
+import Grid from '@mui/material/Grid'
+import Checkbox from '@mui/material/Checkbox'
+import FormGroup from '@mui/material/FormGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import ContentCopy from 'mdi-material-ui/ContentCopy'
 import Tooltip from '@mui/material/Tooltip'
 import Backdrop from '@mui/material/Backdrop'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemButton from '@mui/material/ListItemButton'
 import MenuItem from '@mui/material/MenuItem'
-import Checkbox from '@mui/material/Checkbox'
 import { styled } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import InputAdornment from '@mui/material/InputAdornment'
 import CircularProgress from '@mui/material/CircularProgress'
 import ListItem from '@mui/material/ListItem'
+import { useRouter } from 'next/router'
+
+import { rows } from 'src/@fake-db/table/product-list-data'
 
 // ** Icons Import
 import MenuIcon from 'mdi-material-ui/Menu'
@@ -67,6 +79,92 @@ const ScrollWrapper = ({ children, hidden }) => {
 }
 
 const MailLog = props => {
+  // a
+  const router = useRouter()
+
+  const [open, setOpen] = useState(false)
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+
+  const [fdata, setFdata] = useState([])
+
+  const handleChange = (e, val) => {
+    let isChecked = e.target.checked
+    console.log(isChecked)
+
+    if (isChecked) {
+      fdata.push(val)
+      console.log(fdata)
+    } else {
+      setFdata(current =>
+        current.filter(fdata => {
+          return fdata.id !== val.id
+        })
+      )
+    }
+  }
+
+  const handleSubmit = () => {
+    console.log(fdata)
+
+    if (fdata.length > 0) {
+      fdata.forEach((data, index) => {
+        axios({
+          url: process.env.NEXT_PUBLIC_API_ENDPOINT,
+          method: 'post',
+          data: {
+            query: `
+        mutation {
+          productCreate(data: {
+              category_id: 1,
+              title: "${data.title}",
+              short_description: "${data.short_description}",
+              long_description: "${data.short_description}",
+              html_content: "${data.short_description}",
+              price: ${data.price},
+              discount: ${data.discount},
+              country_of_origin: "India",
+              status: Active,
+          }) {
+              id,
+              category_id,
+              title,
+              short_description,
+              long_description,
+              html_content,
+              price,
+              discount,
+              country_of_origin,
+              medias {
+                  id,
+                  src
+              },
+              attributes {
+                  name,
+                  value
+              },
+              faqs {
+                  id,
+                  question,
+                  answer,
+              },
+              stock,
+              status,
+              created_at,
+              updated_at
+          }
+      } `
+          },
+          headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
+        }).then(result => {
+          console.log(result)
+        })
+      })
+    }
+
+    router.push('/product')
+  }
+
   // ** Props
   const {
     store,
@@ -292,267 +390,54 @@ const MailLog = props => {
   return (
     <Box sx={{ width: '100%', overflow: 'hidden', position: 'relative', '& .ps__rail-y': { zIndex: 5 } }}>
       <Box sx={{ height: '100%', backgroundColor: 'background.paper' }}>
-        <Box sx={{ px: 5, py: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-            {lgAbove ? null : (
-              <IconButton onClick={handleLeftSidebarToggle} sx={{ mr: 1, ml: -2 }}>
-                <MenuIcon fontSize='small' />
-              </IconButton>
-            )}
-            <Input
-              value={query}
-              placeholder='Search mail'
-              onChange={e => setQuery(e.target.value)}
-              sx={{ width: '100%', '&:before, &:after': { display: 'none' } }}
-              startAdornment={
-                <InputAdornment position='start' sx={{ color: 'text.disabled' }}>
-                  <Magnify sx={{ fontSize: '1.375rem' }} />
-                </InputAdornment>
-              }
-            />
-          </Box>
-        </Box>
         <Divider sx={{ m: 0 }} />
-        <Box sx={{ py: 1.75, px: { xs: 2.5, sm: 5 } }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {store && store.mails && store.selectedMails ? (
-                <Checkbox
-                  onChange={e => dispatch(handleSelectAllMail(e.target.checked))}
-                  checked={(store.mails.length && store.mails.length === store.selectedMails.length) || false}
-                  sx={{
-                    '& .MuiSvgIcon-root': { fontSize: '1.375rem' },
-                    '&:not(.Mui-checked) .MuiSvgIcon-root': { color: 'text.disabled' }
-                  }}
-                  indeterminate={
-                    !!(
-                      store.mails.length &&
-                      store.selectedMails.length &&
-                      store.mails.length !== store.selectedMails.length
-                    )
-                  }
-                />
-              ) : null}
-
-              {store && store.selectedMails.length && store.mails && store.mails.length ? (
-                <Fragment>
-                  {routeParams && routeParams.folder !== 'trash' ? (
-                    <IconButton onClick={handleMoveToTrash}>
-                      <DeleteOutline />
-                    </IconButton>
-                  ) : null}
-                  <IconButton onClick={() => handleReadMail(store.selectedMails, false)}>
-                    <EmailOutline />
-                  </IconButton>
-                  <IconButton onClick={handleFolderMenuClick}>
-                    <FolderOutline />
-                  </IconButton>
-                  <IconButton onClick={handleLabelMenuClick}>
-                    <LabelOutline />
-                  </IconButton>
-                  <Menu
-                    open={openLabelMenu}
-                    anchorEl={labelAnchorEl}
-                    onClose={handleLabelMenuClose}
-                    PaperProps={{ style: { minWidth: '9rem' } }}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'left'
-                    }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'left'
-                    }}
-                  >
-                    {renderLabelsMenu()}
-                  </Menu>
-                  <Menu
-                    open={openFolderMenu}
-                    anchorEl={folderAnchorEl}
-                    onClose={handleFolderMenuClose}
-                    PaperProps={{ style: { minWidth: '9rem' } }}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'left'
-                    }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'left'
-                    }}
-                  >
-                    {renderFoldersMenu()}
-                  </Menu>
-                </Fragment>
-              ) : null}
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton size='small' onClick={handleRefreshMailsClick}>
-                <Reload sx={{ color: 'text.disabled', fontSize: '1.375rem' }} />
-              </IconButton>
-              <IconButton size='small'>
-                <DotsVertical sx={{ color: 'text.disabled', fontSize: '1.375rem' }} />
-              </IconButton>
-            </Box>
-          </Box>
+        <Box sx={{ p: 5, overflowY: 'hidden' }}>
+          <Button fullWidth variant='contained' item onClick={handleSubmit}>
+            Submit
+          </Button>
         </Box>
-        <Divider sx={{ m: 0 }} />
+        {/* <Grid container direction='row' justifyContent='right'>
+          <Button variant='contained' item onClick={handleSubmit}>
+            Submit
+          </Button>
+        </Grid> */}
         <Box sx={{ p: 0, position: 'relative', overflowX: 'hidden', height: 'calc(100% - 7rem)' }}>
           <ScrollWrapper hidden={hidden}>
-            {store && store.mails && store.mails.length ? (
-              <List sx={{ p: 0 }}>
-                {store.mails.map((mail, index) => {
-                  const MailReadToggleIcon = mail.isRead ? EmailOutline : EmailOpenOutline
-
-                  return (
-                    <Box
-                      key={mail.id}
-                      sx={{
-                        transition: 'all 0.15s ease-in-out',
-                        '&:hover': {
-                          zIndex: 2,
-                          boxShadow: '3',
-                          transform: 'translateY(-2px)',
-                          '& .mail-info-right': {
-                            display: 'none'
-                          },
-                          '& .mail-actions': {
-                            display: 'flex'
-                          }
-                        }
-                      }}
-                    >
-                      <MailItem
-                        sx={{ py: 2.75, backgroundColor: mail.isRead ? 'action.hover' : 'background.paper' }}
-                        onClick={() => {
-                          setMailDetailsOpen(true)
-                          dispatch(getCurrentMail(mail.id))
-                          dispatch(updateMail({ emailIds: [mail.id], dataToUpdate: { isRead: true } }))
-                          setTimeout(() => {
-                            dispatch(handleSelectAllMail(false))
-                          }, 600)
+            <List component='nav' aria-label='main mailbox'>
+              {rows.map((data, i) => {
+                return (
+                  <>
+                    <ListItem disablePadding>
+                      <Box
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          gap: '60px',
+                          width: '100%'
                         }}
                       >
-                        <Box sx={{ mr: 4, display: 'flex', overflow: 'hidden', alignItems: 'center' }}>
-                          <Checkbox
-                            onClick={e => e.stopPropagation()}
-                            onChange={() => dispatch(handleSelectMail(mail.id))}
-                            checked={store.selectedMails.includes(mail.id) || false}
+                        <ListItemButton>
+                          <img
+                            src='https://images.unsplash.com/photo-1559181567-c3190ca9959b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=464&q=80'
+                            alt=''
+                            style={{ width: 60, height: 60, borderRadius: '3px', marginRight: '12px' }}
                           />
-                          <IconButton
-                            size='small'
-                            onClick={e => handleStarMail(e, mail.id, !mail.isStarred)}
-                            sx={{
-                              pl: 0,
-                              mr: { xs: 0, sm: 2 },
-                              color: mail.isStarred ? 'warning.main' : 'text.secondary'
-                            }}
-                          >
-                            <StarOutline sx={{ display: { xs: 'none', sm: 'block' } }} />
-                          </IconButton>
-                          <Avatar
-                            alt={mail.from.name}
-                            src={mail.from.avatar}
-                            sx={{ mr: 3.5, width: '2rem', height: '2rem' }}
+                          <ListItemText primary={data.title} />
+                        </ListItemButton>
+                        <FormGroup row>
+                          <FormControlLabel
+                            value={data.id}
+                            onChange={e => handleChange(e, data)}
+                            control={<Checkbox name='basic-unchecked' />}
                           />
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              overflow: 'hidden',
-                              flexDirection: { xs: 'column', sm: 'row' },
-                              alignItems: { xs: 'flex-start', sm: 'center' }
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                mr: 4,
-                                fontWeight: 600,
-                                whiteSpace: 'nowrap',
-                                width: ['100%', 'auto'],
-                                overflow: ['hidden', 'unset'],
-                                textOverflow: ['ellipsis', 'unset']
-                              }}
-                            >
-                              {mail.from.name}
-                            </Typography>
-                            <Typography noWrap variant='body2' sx={{ width: '100%' }}>
-                              {mail.subject}
-                            </Typography>
-                          </Box>
-                        </Box>
-                        <Box
-                          className='mail-actions'
-                          sx={{ display: 'none', alignItems: 'center', justifyContent: 'flex-end' }}
-                        >
-                          {routeParams && routeParams.folder !== 'trash' ? (
-                            <Tooltip placement='top' title='Delete Mail'>
-                              <IconButton
-                                onClick={e => {
-                                  e.stopPropagation()
-                                  dispatch(updateMail({ emailIds: [mail.id], dataToUpdate: { folder: 'trash' } }))
-                                }}
-                              >
-                                <DeleteOutline />
-                              </IconButton>
-                            </Tooltip>
-                          ) : null}
-
-                          <Tooltip placement='top' title={mail.isRead ? 'Unread Mail' : 'Read Mail'}>
-                            <IconButton
-                              onClick={e => {
-                                e.stopPropagation()
-                                handleReadMail([mail.id], !mail.isRead)
-                              }}
-                            >
-                              <MailReadToggleIcon />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip placement='top' title='Move to Spam'>
-                            <IconButton
-                              onClick={e => {
-                                e.stopPropagation()
-                                handleFolderUpdate([mail.id], 'spam')
-                              }}
-                            >
-                              <AlertOctagonOutline />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-                        <Box
-                          className='mail-info-right'
-                          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
-                        >
-                          <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>{renderMailLabels(mail.labels)}</Box>
-                          <Typography
-                            variant='caption'
-                            sx={{
-                              minWidth: '50px',
-                              textAlign: 'right',
-                              lineHeight: '.95rem',
-                              whiteSpace: 'nowrap',
-                              color: 'text.disabled'
-                            }}
-                          >
-                            {new Date(mail.time).toLocaleTimeString('en-US', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              hour12: true
-                            })}
-                          </Typography>
-                        </Box>
-                      </MailItem>
-                      {store.mails !== null && store.mails.length - 1 > index ? (
-                        <Divider sx={{ my: 0, mx: -5 }} />
-                      ) : null}
-                    </Box>
-                  )
-                })}
-              </List>
-            ) : (
-              <Box sx={{ mt: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <AlertCircleOutline fontSize='small' sx={{ mr: 2 }} />
-                <Typography>No Mails Found</Typography>
-              </Box>
-            )}
+                        </FormGroup>
+                      </Box>
+                    </ListItem>
+                  </>
+                )
+              })}
+            </List>
           </ScrollWrapper>
           <Backdrop
             open={refresh}

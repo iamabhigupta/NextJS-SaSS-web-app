@@ -1,5 +1,5 @@
 // ** Demo Components Imports
-import Email from 'src/views/apps/email/Email'
+import Email from 'src/views/apps/email/CategoryPopup'
 
 const EmailApp = () => <Email folder='inbox' />
 

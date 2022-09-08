@@ -6,6 +6,7 @@ import Poll from 'mdi-material-ui/Poll'
 import Cube from 'mdi-material-ui/Cube'
 import AccountSupervisor from 'mdi-material-ui/AccountSupervisor'
 import Shopping from 'mdi-material-ui/Shopping'
+import Account from 'mdi-material-ui/Account'
 import ViewCompact from 'mdi-material-ui/ViewCompact'
 import ArrangeBringToFront from 'mdi-material-ui/ArrangeBringToFront'
 
@@ -68,6 +69,11 @@ const navigation = () => [
     title: 'Site Configuration',
     icon: ApplicationCog,
     path: '/site-configuration'
+  },
+  {
+    title: 'Account',
+    icon: Account,
+    path: '/account'
   },
   {
     title: 'Dashboard 2',
