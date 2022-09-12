@@ -4,17 +4,17 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 
 // ** Demo Components Imports
-import NewCategory from 'src/views/forms/form-layouts/NewCategory'
-import NewCategoryCoollaps from 'src/views/forms/form-layouts/NewCategoryCoollaps'
+import NewStore from 'src/views/forms/form-layouts/NewStore'
+import NewStoreCollaps from 'src/views/forms/form-layouts/NewStoreCollaps'
 
 const StoreNew = () => {
   return (
     <Grid container spacing={6} className='match-height'>
       <Grid item xs={12}>
-        <NewCategory />
+        <NewStore />
       </Grid>
       <Grid item xs={12} sx={{ pt: theme => `${theme.spacing(4)} !important` }}>
-        <NewCategoryCoollaps />
+        <NewStoreCollaps />
       </Grid>
       <Grid item xs={12}>
         <Box

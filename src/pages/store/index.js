@@ -51,7 +51,7 @@ import { getInitials } from 'src/@core/utils/get-initials'
 // ** Custom Components Imports
 import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
-import TableHeader from 'src/views/apps/invoice/list/TableHeader'
+import TableStore from 'src/views/apps/invoice/list/TableStore'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
@@ -161,7 +161,7 @@ const defaultColumns = [
     flex: 0.25,
     field: 'name',
     minWidth: 300,
-    headerName: 'Category',
+    headerName: 'Store',
     renderCell: ({ row }) => {
       const { name, companyEmail } = row
 
@@ -293,7 +293,7 @@ const Store = () => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <TableHeader value={value} selectedRows={selectedRows} handleFilter={handleFilter} />
+          <TableStore value={value} selectedRows={selectedRows} handleFilter={handleFilter} />
           <DataGrid
             autoHeight
             pagination
