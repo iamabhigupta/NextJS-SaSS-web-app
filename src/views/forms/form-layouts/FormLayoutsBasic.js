@@ -36,7 +36,7 @@ import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
 import FileUploaderMultiple from '../form-elements/file-uploader/FileUploaderMultiple'
 
-const FormLayoutsBasic = ({fName,fCatName,fPrice,fDprice,fPdesc}) => {
+const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc }) => {
   // ** States
   const [values, setValues] = useState({
     password: '',
@@ -79,23 +79,65 @@ const FormLayoutsBasic = ({fName,fCatName,fPrice,fDprice,fPdesc}) => {
           <Grid container spacing={5}>
             <Grid item xs={12}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Name</Typography>
-              <TextField autoComplete='off' onChange = {(e) => fName(e.target.value)} fullWidth placeholder='Enter product name' />
+              <TextField
+                autoComplete='off'
+                onChange={e => fName(e.target.value)}
+                fullWidth
+                placeholder='Enter product name'
+              />
             </Grid>
             <Grid item xs={12}>
-              <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Category</Typography>
-              <TextField autoComplete='off' onChange = {(e) => fCatName(e.target.value)} fullWidth placeholder='Enter category name' />
+              <Grid item xs={6}>
+                <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Category</Typography>
+                <FormControl fullWidth>
+                  <Select defaultValue='' displayEmpty inputProps={{ 'aria-label': 'Without label' }}>
+                    <MenuItem value=''>
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value='Kirana'>Kirana</MenuItem>
+                    <MenuItem value='Hotel'>Hotel</MenuItem>
+                    <MenuItem value='Resturant'>Resturant</MenuItem>
+                  </Select>
+                  {/* <FormHelperText>Without label</FormHelperText> */}
+                </FormControl>
+              </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid item xs={6}>
+                <Typography sx={{ mb: 2, fontWeight: 500 }}>Store</Typography>
+                <FormControl fullWidth>
+                  <Select defaultValue='' displayEmpty inputProps={{ 'aria-label': 'Without label' }}>
+                    <MenuItem value=''>
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value='Store1'>Store1</MenuItem>
+                    <MenuItem value='Store2'>Store2</MenuItem>
+                    <MenuItem value='Store3'>Store3</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
             </Grid>
             <Grid item xs={6}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Price</Typography>
-              <TextField autoComplete='off' onChange = {(e) => fPrice(e.target.value)} fullWidth placeholder='Enter price' />
+              <TextField
+                autoComplete='off'
+                onChange={e => fPrice(e.target.value)}
+                fullWidth
+                placeholder='Enter price'
+              />
             </Grid>
             <Grid item xs={6}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Discounted Price</Typography>
-              <TextField autoComplete='off' onChange = {(e) => fDprice(e.target.value)} fullWidth placeholder='Enter discounted price' />
+              <TextField
+                autoComplete='off'
+                onChange={e => fDprice(e.target.value)}
+                fullWidth
+                placeholder='Enter discounted price'
+              />
             </Grid>
             <Grid item xs={6}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Veg / Non Veg / Egg</Typography>
-              <FormControl fullWidth>
+              {/* <FormControl fullWidth>
                 <InputLabel id='demo-multiple-name-label'>Choose Option</InputLabel>
                 <Select
                   multiple
@@ -111,11 +153,26 @@ const FormLayoutsBasic = ({fName,fCatName,fPrice,fDprice,fPdesc}) => {
                     </MenuItem>
                   ))}
                 </Select>
+              </FormControl> */}
+              <FormControl fullWidth>
+                <Select defaultValue='' displayEmpty inputProps={{ 'aria-label': 'Without label' }}>
+                  <MenuItem value=''>
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value='Veg'>Veg</MenuItem>
+                  <MenuItem value='Non Veg'>Non Veg</MenuItem>
+                  <MenuItem value='Egg'>Egg</MenuItem>
+                </Select>
               </FormControl>
             </Grid>
             <Grid item xs={12}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Description</Typography>
-              <TextField autoComplete='off' onChange = {(e) => fPdesc(e.target.value)} fullWidth placeholder='Enter product description' />
+              <TextField
+                autoComplete='off'
+                onChange={e => fPdesc(e.target.value)}
+                fullWidth
+                placeholder='Enter product description'
+              />
             </Grid>
             <Grid item xs={12}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Media (up to 5)</Typography>

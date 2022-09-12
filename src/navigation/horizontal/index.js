@@ -9,6 +9,7 @@ import Shopping from 'mdi-material-ui/Shopping'
 import Account from 'mdi-material-ui/Account'
 import ViewCompact from 'mdi-material-ui/ViewCompact'
 import ArrangeBringToFront from 'mdi-material-ui/ArrangeBringToFront'
+import Store from 'mdi-material-ui/Store'
 
 const navigation = () => [
   {
@@ -33,6 +34,20 @@ const navigation = () => [
       {
         title: 'Add Category',
         path: '/category/new'
+      }
+    ]
+  },
+  {
+    title: 'Store',
+    icon: Store,
+    children: [
+      {
+        title: 'All Store',
+        path: '/store'
+      },
+      {
+        title: 'Add Store',
+        path: '/store/new'
       }
     ]
   },
