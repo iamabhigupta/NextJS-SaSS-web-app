@@ -90,6 +90,7 @@ const StepperVerticalWithoutNumbers = () => {
   const handleClose = value => {
     setOpen(false)
     setCategory(value)
+    handleChange(value)
   }
 
   const router = useRouter()
@@ -118,8 +119,8 @@ const StepperVerticalWithoutNumbers = () => {
 
   const [category, setCategory] = useState('')
 
-  const handleChange = e => {
-    setCategory(e.target.value)
+  const handleChange = (categoryName) => {
+    // setCategory(e.target.value)
 
     axios({
       url: process.env.NEXT_PUBLIC_API_ENDPOINT,
@@ -128,8 +129,8 @@ const StepperVerticalWithoutNumbers = () => {
         query: `
     mutation {
       productCategoryCreate(data: {
-          name: "${e.target.value}",
-          slug: "${e.target.value}",
+          name: "${categoryName}",
+          slug: "${categoryName}",
           status: Active,
       }) {
           id

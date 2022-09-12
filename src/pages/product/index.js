@@ -301,6 +301,7 @@ const Product = () => {
     query {
       productFindAll {
           id,
+          store_id,
           category_id,
           title,
           short_description,
@@ -327,7 +328,7 @@ const Product = () => {
           created_at,
           updated_at
       }
-  } `    
+  }`    
     },
     headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
       }).then((result) => {      

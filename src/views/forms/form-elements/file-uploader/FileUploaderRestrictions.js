@@ -1,5 +1,6 @@
 // ** React Imports
 import { Fragment, useState } from 'react'
+import axios from 'axios'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -17,6 +18,7 @@ import FileDocumentOutline from 'mdi-material-ui/FileDocumentOutline'
 // ** Third Party Components
 import toast from 'react-hot-toast'
 import { useDropzone } from 'react-dropzone'
+import FormData from "form-data"
 
 // Styled component for the upload image inside the dropzone area
 const Img = styled('img')(({ theme }) => ({
@@ -45,7 +47,60 @@ const FileUploaderRestrictions = ({fileSrc}) => {
   const [files, setFiles] = useState([])
   fileSrc(JSON.stringify(files))
 
+ 
   // console.log(files);
+  const handleChange = () => {
+    console.log(888888)
+
+  //   let siteName = "HH";  
+  //   let siteCategory = "";  
+  //   let siteType = "";  
+
+  //   let operation = `{ "query": "mutation($site_logo: Upload) { settingUpdateOrCreate(data: {site_name: \\"${siteName}\\", site_category: \\"${siteCategory}\\", site_type: \\"${siteType}\\", site_logo: $site_logo}) {site_name, site_category, site_type, site_logo}}","variables": {"site_logo": null} }`
+  //   var formData = new FormData();
+  //   formData.append('operations', operation);
+  //   formData.append('map', '{"0": ["variables.site_logo"]}');
+  //   formData.append('0', files[0]);
+
+  //   console.log("fordata---response")
+
+  //   for (var key of formData.entries()) {
+  //     console.log(key[0] + ", " + key[1]);
+  // }
+
+  //    axios.post(process.env.NEXT_PUBLIC_API_ENDPOINT, formData, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: 'Bearer '+window.localStorage.getItem('accessToken')
+  //       }
+  //   })
+  //       .then(response => console.log(response))
+  //       .catch(error => console.log(error));
+
+    // axios({
+    //   url: 'https://1jzxrj179.lp.gql.zone/graphql',
+    //   method: 'post',
+    //   data: {
+    //     query: `
+    //       query PostsForAuthor {
+    //         author(id: 1) {
+    //           firstName
+    //             posts {
+    //               title
+    //               votes
+    //             }
+    //           }
+    //         }
+    //       `
+    //   }
+    // }).then((result) => {
+    //   console.log(result.data)
+    // });
+
+  }
+
+
+
   
   // ** Hooks
   const { getRootProps, getInputProps } = useDropzone({
@@ -56,6 +111,8 @@ const FileUploaderRestrictions = ({fileSrc}) => {
     },
     onDrop: acceptedFiles => {
       setFiles(acceptedFiles.map(file => Object.assign(file)))
+      // handleChange()
+
     },
     onDropRejected: () => {
       toast.error('You can only upload 2 files & maximum size of 2 MB.', {
@@ -65,7 +122,7 @@ const FileUploaderRestrictions = ({fileSrc}) => {
   })
 
   const renderFilePreview = file => {
-    if (file.type.startsWith('image')) {
+    if (file.type.startsWith('image')) {      
       return <img width={38} height={38} alt={file.name} src={URL.createObjectURL(file)} />
     } else {
       return <FileDocumentOutline />
@@ -79,6 +136,7 @@ const FileUploaderRestrictions = ({fileSrc}) => {
   }
 
   const fileList = files.map(file => (
+    
     <ListItem key={file.name}>
       <div className='file-details'>
         <div className='file-preview'>{renderFilePreview(file)}</div>

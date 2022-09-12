@@ -28,46 +28,49 @@ const Settings = () => {
       method: 'post',
       data:{   
     query: `
-    mutation {
-      productCreate(data: {
-          category_id: 1,
-          title: "${fname}",
-          short_description: "${fpdesc}",
-          long_description: "${fpdesc}",
-          html_content: "${fpdesc}",
-          price: ${fprice},
-          discount: ${fdprice},
-          country_of_origin: "India",
-          status: Active,
-      }) {
-          id,
-          category_id,
-          title,
-          short_description,
-          long_description,
-          html_content,
-          price,
-          discount,
-          country_of_origin,
-          medias {
-              id,
-              src
-          },
-          attributes {
-              name,
-              value
-          },
-          faqs {
-              id,
-              question,
-              answer,
-          },
-          stock,
-          status,
-          created_at,
-          updated_at
-      }
-  } `    
+          
+          mutation {
+            productCreate(data: {
+                store_id: 1,
+                category_id: 1,
+                title: "${fname}",
+                short_description: "${fpdesc}",
+                long_description: "${fpdesc}",
+                html_content: "${fpdesc}",
+                price: ${fprice},
+                discount: ${fdprice},
+                country_of_origin: "India",
+                status: Active,
+            }) {
+                id,
+                store_id,
+                category_id,
+                title,
+                short_description,
+                long_description,
+                html_content,
+                price,
+                discount,
+                country_of_origin,
+                medias {
+                    id,
+                    src
+                },
+                attributes {
+                    name,
+                    value
+                },
+                faqs {
+                    id,
+                    question,
+                    answer,
+                },
+                stock,
+                status,
+                created_at,
+                updated_at
+            }
+        } `    
     },
     headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
       }).then((result) => {      

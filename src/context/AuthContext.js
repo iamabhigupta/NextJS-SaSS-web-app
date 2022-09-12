@@ -90,7 +90,7 @@ const AuthProvider = ({ children }) => {
       }
     }).then((result) => {
       
-      if(result.data.data.login.user.role_id == 3){
+      if(result.data.data.login.user.role_id == 6){
         result.data.data.login.user.role = 'admin'
       }
 
