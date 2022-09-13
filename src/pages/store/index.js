@@ -1,5 +1,6 @@
 // ** React Imports
-import { Fragment, useState, useEffect, forwardRef } from 'react'
+import { Fragment, useState, useEffect, forwardRef,useCallback } from 'react'
+import axios from 'axios'
 
 // ** Next Import
 import Link from 'next/link'
@@ -130,40 +131,30 @@ const invoiceStatusObj = {
 
 // ** renders client column
 const renderClient = row => {
-  if (row.avatar.length) {
-    return <CustomAvatar src={row.avatar} sx={{ mr: 3, width: 34, height: 34 }} />
+  if (row.name) {
+    //return <CustomAvatar src={row.name} sx={{ mr: 3, width: 34, height: 34 }} />
   } else {
-    return (
-      <CustomAvatar
-        skin='light'
-        color={row.avatarColor || 'primary'}
-        sx={{ mr: 3, fontSize: '1rem', width: 34, height: 34 }}
-      >
-        {getInitials(row.name || 'John Doe')}
-      </CustomAvatar>
-    )
+    // return (
+    //   <CustomAvatar
+    //     skin='light'
+    //     color={row.avatarColor || 'primary'}
+    //     sx={{ mr: 3, fontSize: '1rem', width: 34, height: 34 }}
+    //   >
+    //     {getInitials(row.name || 'John Doe')}
+    //   </CustomAvatar>
+    // )
   }
 }
 
 const defaultColumns = [
-  // {
-  //   flex: 0.1,
-  //   field: 'id',
-  //   minWidth: 80,
-  //   headerName: 'Id',
-  //   renderCell: ({ row }) => (
-  //     <Link href={`/apps/invoice/preview/${row.id}`} passHref>
-  //       <StyledLink>{`#${row.id}`}</StyledLink>
-  //     </Link>
-  //   )
-  // },
+
   {
     flex: 0.25,
     field: 'name',
     minWidth: 300,
-    headerName: 'Store',
+    headerName: 'Name',
     renderCell: ({ row }) => {
-      const { name, companyEmail } = row
+      const { name } = row
 
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -174,32 +165,24 @@ const defaultColumns = [
               variant='body2'
               sx={{ color: 'text.primary', fontWeight: 500, lineHeight: '22px', letterSpacing: '.1px' }}
             >
-              {name}
+              {name} 
             </Typography>
-            <Typography noWrap variant='caption'>
-              {companyEmail}
-            </Typography>
+         
           </Box>
         </Box>
       )
     }
   },
+
   {
     flex: 0.1,
     minWidth: 90,
-    field: 'total',
-    headerName: 'Products',
-    renderCell: ({ row }) => <Typography variant='body2'>{`$${row.total || 0}`}</Typography>
-  },
-  {
-    flex: 0.1,
-    minWidth: 90,
-    field: 'balance',
+    field: 'status',
     headerName: 'Status',
     renderCell: ({ row }) => {
       return row.balance !== 0 ? (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {row.balance}
+          {row.status}
         </Typography>
       ) : (
         <CustomChip size='small' skin='light' color='success' label='Paid' />
@@ -228,6 +211,37 @@ const Store = () => {
   const [endDateRange, setEndDateRange] = useState(null)
   const [selectedRows, setSelectedRows] = useState([])
   const [startDateRange, setStartDateRange] = useState(new Date())
+
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+
+    axios({
+      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      method: 'post',
+      data:{   
+    query: `
+    query {
+      storeFindAll {
+          id,
+          user_id,
+          name,
+          description,
+          status,
+          created_at,
+          updated_at
+      }
+  }`    
+    },
+    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+      }).then((result) => {      
+        console.log(result.data.data.storeFindAll)
+        setRows(result.data.data.storeFindAll)
+
+    })
+  
+  
+  }, []);
 
   // ** Hooks
   const dispatch = useDispatch()
@@ -269,25 +283,13 @@ const Store = () => {
       headerName: 'Actions',
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title='Delete Invoice'>
-            <IconButton size='small' sx={{ mr: 0.5 }} onClick={() => dispatch(deleteInvoice(row.id))}>
-              <DeleteOutline />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title='View'>
-            <Box>
-              <Link href={`/apps/invoice/preview/${row.id}`} passHref>
-                <IconButton size='small' component='a' sx={{ textDecoration: 'none', mr: 0.5 }}>
-                  <EyeOutline />
-                </IconButton>
-              </Link>
-            </Box>
-          </Tooltip>
-          <RowOptions id={row.id} />
+        
         </Box>
       )
     }
   ]
+
+
 
   return (
     <Grid container spacing={6}>
@@ -297,7 +299,7 @@ const Store = () => {
           <DataGrid
             autoHeight
             pagination
-            rows={store.data}
+            rows={rows}
             columns={columns}
             checkboxSelection
             disableSelectionOnClick

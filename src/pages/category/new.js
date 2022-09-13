@@ -1,3 +1,9 @@
+import React, { useState } from "react";
+import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/router'
+
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
@@ -8,14 +14,83 @@ import NewCategory from 'src/views/forms/form-layouts/NewCategory'
 import NewCategoryCoollaps from 'src/views/forms/form-layouts/NewCategoryCoollaps'
 
 const New = () => {
+  const router = useRouter()
+  
+  const [formData, setFormData] = useState({
+    name: "",
+    slug: "",
+    store_id:"",
+    status: "Active",
+  });
+
+  let users = JSON.parse(window.localStorage.getItem("userData"))
+
+
+  const handleSubmit = () => {
+
+    axios({
+      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      method: 'post',
+      data:{    
+ 
+    query: `
+    mutation {
+      productCategoryCreate(data: {
+          store_id: ${formData.store_id},
+          name: "${formData.name}",
+          slug: "${formData.name}",
+          status: Active,
+      }) {
+          id,
+          store_id,
+          name,
+          slug,
+          image,
+          attributes {
+              id,
+              name,
+              status
+          }
+          status,
+          created_at,
+          updated_at
+      }
+  } `
+        
+
+    },
+    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+
+      }).then((result) => {      
+        console.log(result)
+
+        toast.success('Category has created successfully !', {
+          position: toast.POSITION.TOP_RIGHT
+      });
+
+
+      setTimeout(
+        () => router.push('/category')
+        , 
+        2000
+      );
+
+    }).catch(err => {
+      console.log(err)
+    })
+
+  }
+
+
   return (
-    <Grid container spacing={6} className='match-height'>
+
+    <><ToastContainer /><Grid container spacing={6} className='match-height'>
       <Grid item xs={12}>
-        <NewCategory />
+        <NewCategory formData={formData} setFormData={setFormData} />
       </Grid>
-      <Grid item xs={12} sx={{ pt: theme => `${theme.spacing(4)} !important` }}>
-        <NewCategoryCoollaps />
-      </Grid>
+      {/* <Grid item xs={12} sx={{ pt: theme => `${theme.spacing(4)} !important` }}>
+      <NewCategoryCoollaps />
+    </Grid> */}
       <Grid item xs={12}>
         <Box
           sx={{
@@ -26,12 +101,14 @@ const New = () => {
             alignItems: 'center'
           }}
         >
-          <Button type='submit' color='success' variant='contained' size='large'>
+          <Button type='button' color='success' variant='contained' size='large'
+            onClick={handleSubmit}
+          >
             Add Category
           </Button>
         </Box>
       </Grid>
-    </Grid>
+    </Grid></>
   )
 }
 

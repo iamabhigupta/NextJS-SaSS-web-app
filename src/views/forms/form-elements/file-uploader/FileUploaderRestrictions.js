@@ -111,6 +111,7 @@ const FileUploaderRestrictions = ({fileSrc}) => {
     },
     onDrop: acceptedFiles => {
       setFiles(acceptedFiles.map(file => Object.assign(file)))
+      
       // handleChange()
 
     },

@@ -36,7 +36,7 @@ import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
 import FileUploadStore from '../form-elements/file-uploader/FileUploadStore'
 
-const NewStore = () => {
+const NewStore = ({formData, setFormData}) => {
   // ** States
   const [values, setValues] = useState({
     password: '',
@@ -77,16 +77,20 @@ const NewStore = () => {
           <Grid container spacing={5}>
             <Grid item xs={12}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Store Name</Typography>
-              <TextField autoComplete='off' fullWidth placeholder='Enter Store name' />
+              <TextField autoComplete='off' name="name" fullWidth placeholder='Enter Store name'               
+              onChange={(event) =>
+                setFormData({ ...formData, name: event.target.value })
+              }
+               />
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Store Image</Typography>
               <DropzoneWrapper>
                 <Grid item xs={12}>
                   <FileUploadStore />
                 </Grid>
               </DropzoneWrapper>
-            </Grid>
+            </Grid> */}
           </Grid>
         </form>
       </CardContent>
