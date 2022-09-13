@@ -1,5 +1,6 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState,useEffect, forwardRef ,useCallback} from 'react'
+import axios from 'axios'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -36,7 +37,7 @@ import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
 import FileUploaderMultiple from '../form-elements/file-uploader/FileUploaderMultiple'
 
-const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc }) => {
+const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcategory }) => {
   // ** States
   const [values, setValues] = useState({
     password: '',
@@ -71,6 +72,69 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc }) => {
 
   const names = ['Veg', 'Non Veg', 'Egg', 'Others']
 
+  const [storew, setStorew] = useState([]);
+  const [categoryw, setCategoryw] = useState([]);
+
+
+  useEffect(() => {
+
+    axios({
+      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      method: 'post',
+      data:{   
+    query: `
+    query {
+      storeFindAll {
+          id,
+          user_id,
+          name,
+          description,
+          status,
+          created_at,
+          updated_at
+      }
+  }`    
+    },
+    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+      }).then((result) => {      
+        console.log(result.data.data.storeFindAll)
+        setStorew(result.data.data.storeFindAll)
+
+    })
+
+    axios({
+      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      method: 'post',
+      data:{   
+    query: `
+    query {
+      productCategoryFindAll {
+          id,
+          store_id,
+          name,
+          slug,
+          image,
+          attributes {
+              id,
+              name,
+              status
+          }
+          status,
+          created_at,
+          updated_at
+      }
+  }`    
+    },
+    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+      }).then((result) => {      
+        console.log(result.data.data.productCategoryFindAll)
+        setCategoryw(result.data.data.productCategoryFindAll)
+
+    })
+  
+  
+  }, []);
+
   return (
     <Card>
       <CardHeader title='Product Information' titleTypographyProps={{ variant: 'h6' }} />
@@ -90,13 +154,17 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc }) => {
               <Grid item xs={6}>
                 <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Category</Typography>
                 <FormControl fullWidth>
-                  <Select defaultValue='' displayEmpty inputProps={{ 'aria-label': 'Without label' }}>
-                    <MenuItem value=''>
-                      <em>None</em>
+                  <Select defaultValue='' displayEmpty inputProps={{ 'aria-label': 'Without label' }}
+                  onChange={e => fcategory(e.target.value)}
+                  >
+                  <MenuItem value=''>
+                      <em>Select Category ..</em>
                     </MenuItem>
-                    <MenuItem value='Kirana'>Kirana</MenuItem>
-                    <MenuItem value='Hotel'>Hotel</MenuItem>
-                    <MenuItem value='Resturant'>Resturant</MenuItem>
+                    {categoryw.map(data => {
+                    return (
+                    <MenuItem value={data.id} key={data.id}>{data.name}</MenuItem>                 
+                    )
+                    })}
                   </Select>
                   {/* <FormHelperText>Without label</FormHelperText> */}
                 </FormControl>
@@ -106,13 +174,17 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc }) => {
               <Grid item xs={6}>
                 <Typography sx={{ mb: 2, fontWeight: 500 }}>Store</Typography>
                 <FormControl fullWidth>
-                  <Select defaultValue='' displayEmpty inputProps={{ 'aria-label': 'Without label' }}>
-                    <MenuItem value=''>
-                      <em>None</em>
+                  <Select defaultValue='' displayEmpty inputProps={{ 'aria-label': 'Without label' }}
+                  onChange={e => fstore(e.target.value)}                  
+                  >
+                  <MenuItem value=''>
+                      <em>Select Store ..</em>
                     </MenuItem>
-                    <MenuItem value='Store1'>Store1</MenuItem>
-                    <MenuItem value='Store2'>Store2</MenuItem>
-                    <MenuItem value='Store3'>Store3</MenuItem>
+                    {storew.map(data => {
+                    return (
+                    <MenuItem value={data.id} key={data.id}>{data.name}</MenuItem>                 
+                    )
+                    })}
                   </Select>
                 </FormControl>
               </Grid>

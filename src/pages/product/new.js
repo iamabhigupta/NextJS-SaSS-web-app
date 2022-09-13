@@ -20,6 +20,8 @@ const Settings = () => {
   const [fdprice, setFdprice] = useState("")
   const [fprice, setFprice] = useState("")
   const [fpdesc, setFpdesc] = useState("")
+  const [fpstore, setFpstore] = useState("")
+  const [fpcat, setFpcat] = useState("")
 
   const handleClick = (event) => {
     
@@ -31,8 +33,8 @@ const Settings = () => {
           
           mutation {
             productCreate(data: {
-                store_id: 1,
-                category_id: 1,
+                store_id: ${fpstore},
+                category_id: ${fpcat},
                 title: "${fname}",
                 short_description: "${fpdesc}",
                 long_description: "${fpdesc}",
@@ -92,6 +94,8 @@ const Settings = () => {
         fDprice = {text => setFdprice(text)} 
         fPrice = {text => setFprice(text)} 
         fPdesc = {text => setFpdesc(text)} 
+        fstore = {text => setFpstore(text)} 
+        fcategory = {text => setFpcat(text)} 
         
         />
       </Grid>
