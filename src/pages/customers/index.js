@@ -20,9 +20,7 @@ const DataGrid = () => {
     <Grid container spacing={6}>
       <PageHeader
         title={<Typography variant='h5'>All Users</Typography>}
-        subtitle={
-          <Typography variant='body2'>A row is a horizontal alignment of data, while a column is vertical.</Typography>
-        }
+     
       />
       <Grid item xs={12}>
         <TableEditable />
