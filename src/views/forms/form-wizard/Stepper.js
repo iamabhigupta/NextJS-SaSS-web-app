@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import axios from 'axios'
 
 // ** MUI Imports
@@ -119,34 +119,79 @@ const StepperVerticalWithoutNumbers = () => {
 
   const [category, setCategory] = useState('')
 
+  let userData = JSON.parse(window.localStorage.getItem("userData"))
+  const [storeData, setStoreData] = useState([]);
+  
+  
+  useEffect(() => {
+  
+    axios({
+      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      method: 'post',
+      data:{   
+    query: `
+    query {
+      storeFindAllByUser(user_id: ${userData.id}) {
+          id,
+          user_id,
+          name,
+          site_name,
+          description,
+          image,
+          status,
+          created_at,
+          updated_at
+      }
+  }`    
+    },
+    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+      }).then((result) => {      
+        console.log(result.data.data.storeFindAllByUser)
+        setStoreData(result.data.data.storeFindAllByUser)  
+  
+    })
+  
+  
+  
+  
+  }, [userData]);
+
   const handleChange = (categoryName) => {
     // setCategory(e.target.value)
+    var sId = "";
+    if(storeData.length > 0){
+      sId = storeData[0].id;
+    }else{      
+      sId = localStorage.getItem("store_id");
+    }
 
     axios({
       url: process.env.NEXT_PUBLIC_API_ENDPOINT,
       method: 'post',
       data: {
         query: `
-    mutation {
-      productCategoryCreate(data: {
-          name: "${categoryName}",
-          slug: "${categoryName}",
-          status: Active,
-      }) {
-          id
-          name
-          slug
-          image
-          attributes {
-              id
-              name
-              status
+        mutation {
+          productCategoryCreate(data: {
+              store_id: ${sId},
+              name: "${categoryName}",
+              slug: "${categoryName}",
+              status: Active,
+          }) {
+              id,
+              store_id,
+              name,
+              slug,
+              image,
+              attributes {
+                  id,
+                  name,
+                  status
+              }
+              status,
+              created_at,
+              updated_at
           }
-          status
-          created_at
-          updated_at
-      }
-  }  `
+      } `
       },
       headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
     }).then(result => {

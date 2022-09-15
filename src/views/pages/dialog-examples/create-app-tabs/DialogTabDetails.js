@@ -26,14 +26,17 @@ import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 import FileUploaderRestrictions from 'src/views/forms/form-elements/file-uploader/FileUploaderRestrictions'
 
-const TabDetails = ({fName,fStore,fLfile}) => {
+const TabDetails = ({fName,fStore,fLfile,fmediaID}) => {
   const [value, setValue] = useState('ecommerce')
   const [fname, setFname] = useState('')
+  const [logoId, setLogoId] = useState('')
   const [fsrc, setFsrc] = useState([])
 
   fName(fname);
   fStore(value);
   fLfile(fsrc);
+
+  fmediaID(logoId)
 
 
   
@@ -51,7 +54,7 @@ const TabDetails = ({fName,fStore,fLfile}) => {
       <DropzoneWrapper>
         <Grid className='match-height' xs={12}>
           {/* <Grid item xs={7}>  */}
-          <FileUploaderRestrictions fileSrc = {text => setFsrc(text)} />
+          <FileUploaderRestrictions fileSrc = {text => setFsrc(text)} fLogoId = {text => setLogoId(text)} />
           {/* </Grid> */}
         </Grid>
       </DropzoneWrapper>

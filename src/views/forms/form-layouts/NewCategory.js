@@ -72,34 +72,34 @@ const NewCategory = ({formData, setFormData}) => {
 
   const [rows, setRows] = useState([]);
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    axios({
-      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
-      method: 'post',
-      data:{   
-    query: `
-    query {
-      storeFindAll {
-          id,
-          user_id,
-          name,
-          description,
-          status,
-          created_at,
-          updated_at
-      }
-  }`    
-    },
-    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
-      }).then((result) => {      
-        console.log(result.data.data.storeFindAll)
-        setRows(result.data.data.storeFindAll)
+  //   axios({
+  //     url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+  //     method: 'post',
+  //     data:{   
+  //   query: `
+  //   query {
+  //     storeFindAll {
+  //         id,
+  //         user_id,
+  //         name,
+  //         description,
+  //         status,
+  //         created_at,
+  //         updated_at
+  //     }
+  // }`    
+  //   },
+  //   headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+  //     }).then((result) => {      
+  //       console.log(result.data.data.storeFindAll)
+  //       setRows(result.data.data.storeFindAll)
 
-    })
+  //   })
   
   
-  }, []);
+  // }, []);
 
   return (
     <Card>
@@ -116,7 +116,7 @@ const NewCategory = ({formData, setFormData}) => {
               } />
             </Grid>
 
-            <Grid item xs={6}>
+            {/* <Grid item xs={6}>
                 <Typography sx={{ mb: 2, fontWeight: 500 }}>Store</Typography>
                 <FormControl fullWidth>
                   <Select defaultValue='' displayEmpty inputProps={{ 'aria-label': 'Without label' }}
@@ -134,9 +134,9 @@ const NewCategory = ({formData, setFormData}) => {
                     )
                     })}
                   </Select>
-                  {/* <FormHelperText>Without label</FormHelperText> */}
+                 
                 </FormControl>
-              </Grid>
+              </Grid> */}
 
 
             {/* <Grid item xs={12}>

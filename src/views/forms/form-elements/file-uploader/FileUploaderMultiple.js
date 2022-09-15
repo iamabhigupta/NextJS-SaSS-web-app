@@ -1,5 +1,6 @@
 // ** React Imports
 import { Fragment, useState } from 'react'
+import axios from 'axios'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -43,10 +44,64 @@ const FileUploaderMultiple = () => {
   // ** State
   const [files, setFiles] = useState([])
 
+  // console.log("==========1111111111111111111=")
+  // console.log(files)
+
+
+  // console.log(files);
+  const handleChange = (files) => {
+
+    //  useEffect(() => {
+   
+  
+   //   let operation = `{ "query": "mutation($site_logo: Upload) { settingUpdateOrCreate(data: {site_name: \\"${siteName}\\", site_category: \\"${siteCategory}\\", site_type: \\"${siteType}\\", site_logo: $site_logo}) {site_name, site_category, site_type, site_logo}}","variables": {"site_logo": null} }`
+   
+      let operation = `{ "query": "mutation($medias: [Upload]) { mediaUpdateOrCreate(data: {type: \\"Product\\", medias: $medias}) {id, type, src}}","variables": {"medias": [null]} }`
+  
+      var formData = new FormData();
+      formData.append('operations', operation);
+      formData.append('map', '{"0": ["variables.medias.0"]}');
+      formData.append('0', files[0]);
+  
+      console.log("fordata---response")
+  
+      for (var key of formData.entries()) {
+        console.log(key[0] + ", " + key[1]);
+    }
+  
+       axios.post(process.env.NEXT_PUBLIC_API_ENDPOINT, formData, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer '+window.localStorage.getItem('accessToken')
+          }
+      })
+         .then((result) => {
+                    
+          localStorage.setItem("productMediaId", result.data.data.mediaUpdateOrCreate[0].id);
+         
+  
+      }).catch(err => {
+  
+  
+        console.log(err)
+      })
+  
+  
+  //  }, []);
+      
+  
+    }
+
   // ** Hooks
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: acceptedFiles => {
       setFiles(acceptedFiles.map(file => Object.assign(file)))
+
+      setTimeout(
+        () => handleChange(acceptedFiles.map(file => Object.assign(file))), 
+        1000
+      );
+
     }
   })
 

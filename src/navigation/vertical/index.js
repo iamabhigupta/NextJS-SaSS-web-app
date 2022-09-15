@@ -38,20 +38,22 @@ const navigation = () => {
         }
       ]
     },
-    {
-      title: 'Store',
-      icon: Store,
-      children: [
-        {
-          title: 'All Store',
-          path: '/store'
-        },
-        {
-          title: 'Add Store',
-          path: '/store/new'
-        }
-      ]
-    },
+  
+    // {
+    //   title: 'Store',
+    //   icon: Store,
+    //   children: [
+    //     {
+    //       title: 'All Store',
+    //       path: '/store'
+    //     },
+    //     {
+    //       title: 'Add Store',
+    //       path: '/store/new'
+    //     }
+    //   ]
+    // },
+    
     {
       title: 'Product',
       icon: Cube,

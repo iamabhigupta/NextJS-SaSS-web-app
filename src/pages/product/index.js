@@ -290,7 +290,9 @@ const Product = () => {
   const router = useRouter()
 
   const [rows, setRows] = useState([]);
-
+  const [storeData, setStoreData] = useState([]);
+  const userData = JSON.parse(window.localStorage.getItem('userData'))
+  
   useEffect(() => {
 
     axios({
@@ -299,31 +301,13 @@ const Product = () => {
       data:{   
     query: `
     query {
-      productFindAll {
+      storeFindAllByUser(user_id: ${userData.id}) {
           id,
-          store_id,
-          category_id,
-          title,
-          short_description,
-          long_description,
-          html_content,
-          price,
-          discount,
-          country_of_origin,
-          medias {
-              id,
-              src
-          },
-          attributes {
-              name,
-              value
-          },
-          faqs {
-              id,
-              question,
-              answer,
-          },
-          stock,
+          user_id,
+          name,
+          site_name,
+          description,
+          image,
           status,
           created_at,
           updated_at
@@ -332,13 +316,56 @@ const Product = () => {
     },
     headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
       }).then((result) => {      
-        console.log(result.data.data.productFindAll)
-        setRows(result.data.data.productFindAll)
+        console.log(result.data.data.storeFindAllByUser)
+        setStoreData(result.data.data.storeFindAllByUser)
+
+        axios({
+          url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+          method: 'post',
+          data:{   
+        query: `
+        query {
+          productFindAllBySiteName(site_name: "${result.data.data.storeFindAllByUser[0].site_name}") {
+              id,
+              store_id,
+              category_id,
+              title,
+              short_description,
+              long_description,
+              html_content,
+              price,
+              discount,
+              country_of_origin,
+              image,
+              attributes {
+                  name,
+                  value
+              },
+              faqs {
+                  id,
+                  question,
+                  answer,
+              },
+              stock,
+              status,
+              created_at,
+              updated_at
+          }
+      }`    
+        },
+        headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+          }).then((result) => {      
+            console.log(result.data.data.productFindAllBySiteName)
+            setRows(result.data.data.productFindAllBySiteName)
+    
+        })
 
     })
+
+ 
   
   
-  }, []);
+  }, [userData]);
 
   // ** Hooks
   const dispatch = useDispatch()

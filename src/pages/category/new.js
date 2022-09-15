@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,11 +23,47 @@ const New = () => {
     status: "Active",
   });
 
-  let users = JSON.parse(window.localStorage.getItem("userData"))
 
+  let userData = JSON.parse(window.localStorage.getItem("userData"))
+  const [storeData, setStoreData] = useState([]);
+
+
+  useEffect(() => {
+
+    axios({
+      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      method: 'post',
+      data:{   
+    query: `
+    query {
+      storeFindAllByUser(user_id: ${userData.id}) {
+          id,
+          user_id,
+          name,
+          site_name,
+          description,
+          image,
+          status,
+          created_at,
+          updated_at
+      }
+  }`    
+    },
+    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+      }).then((result) => {      
+        console.log(result.data.data.productCategoryCreate)
+        setStoreData(result.data.data.productCategoryCreate)  
+
+    })
+
+ 
+  
+  
+  }, []);
 
   const handleSubmit = () => {
 
+    
     axios({
       url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
       method: 'post',
@@ -36,7 +72,7 @@ const New = () => {
     query: `
     mutation {
       productCategoryCreate(data: {
-          store_id: ${formData.store_id},
+          store_id: ${storeData[0].id},
           name: "${formData.name}",
           slug: "${formData.name}",
           status: Active,

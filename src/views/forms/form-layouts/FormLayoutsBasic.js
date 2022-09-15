@@ -75,6 +75,8 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
   const [storew, setStorew] = useState([]);
   const [categoryw, setCategoryw] = useState([]);
 
+  const [storeData, setStoreData] = useState([]);
+  const userData = JSON.parse(window.localStorage.getItem('userData'))
 
   useEffect(() => {
 
@@ -84,11 +86,13 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
       data:{   
     query: `
     query {
-      storeFindAll {
+      storeFindAllByUser(user_id: ${userData.id}) {
           id,
           user_id,
           name,
+          site_name,
           description,
+          image,
           status,
           created_at,
           updated_at
@@ -97,8 +101,8 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
     },
     headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
       }).then((result) => {      
-        console.log(result.data.data.storeFindAll)
-        setStorew(result.data.data.storeFindAll)
+        console.log(result.data.data.storeFindAllByUser)
+        setStoreData(result.data.data.storeFindAllByUser)
 
     })
 
@@ -133,11 +137,35 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
     })
   
   
-  }, []);
+  }, [userData]);
 
   return (
     <Card>
       <CardHeader title='Product Information' titleTypographyProps={{ variant: 'h6' }} />
+      
+      {storeData.length > 0  && (
+      <Link target="_blank" href={ process.env.NEXT_PUBLIC_STORE_ADDRESS+storeData[0].site_name } underline="hover"  sx={{
+         position:'absolute',
+         top:'18%',
+         left:'50%'
+      }}>
+        { process.env.NEXT_PUBLIC_STORE_ADDRESS+storeData[0].site_name }
+      </Link>
+
+      )}
+
+{storeData.length == 0 && (
+      <Link href="/dashboard" underline="hover"  sx={{
+         position:'absolute',
+         top:'18%',
+         left:'50%',
+         color:'red'
+      }}>
+        Please setup your store .. click here
+      </Link>
+
+      )}
+      
       <CardContent>
         <form onSubmit={e => e.preventDefault()}>
           <Grid container spacing={5}>
@@ -170,7 +198,7 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
                 </FormControl>
               </Grid>
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Grid item xs={6}>
                 <Typography sx={{ mb: 2, fontWeight: 500 }}>Store</Typography>
                 <FormControl fullWidth>
@@ -188,7 +216,7 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
                   </Select>
                 </FormControl>
               </Grid>
-            </Grid>
+            </Grid> */}
             <Grid item xs={6}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Price</Typography>
               <TextField

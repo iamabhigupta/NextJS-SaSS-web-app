@@ -1,6 +1,7 @@
 // ** React Imports
 import { useState, forwardRef ,useCallback} from 'react'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -70,6 +71,9 @@ const TabLabel = props => {
 const tabsArr = ['detailsTab', 'frameworkTab', 'DatabaseTab', 'submitTab']
 
 const DialogCreateApp = () => {
+
+  const router = useRouter()
+
   // ** States
   const [show, setShow] = useState(false)
   const [activeTab, setActiveTab] = useState('detailsTab')
@@ -90,23 +94,53 @@ const DialogCreateApp = () => {
   const [fetype, setFetype] = useState("")
   const [stype, setFstype] = useState("")
   const [ffile, setFfile] = useState([])
+  const [mediaId, setMediaId] = useState("")
+
+  const userData = JSON.parse(window.localStorage.getItem('userData'))
   
   const handleCreateSite = (params, errorCallback) => {
     
+    // console.log("mediaID=====>"+mediaId)
+
     axios({
       url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
       method: 'post',
       data:{    
  
     query: `
-        mutation {
-          settingUpdateOrCreate(data:{site_name: "${params.name}", site_category: "${params.stype}", site_type: "${params.fstore}"}) {site_name, site_category, site_type}}
-          `
+
+    mutation {
+      storeCreate(data: {
+          user_id: ${userData.id},
+          name: "${params.name}",
+          site_name: "${params.name}",
+          description: "N/A",
+          media_ids: "${mediaId}",
+          status: Active
+      }) {
+          id,
+          user_id,
+          name,
+          site_name,
+          description,
+          image,
+          status,
+          created_at,
+          updated_at
+      }
+  }
+
+        `
         
 
-    }
+    },
+    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+
       }).then((result) => {
       
+        localStorage.setItem("store_id", result.data.data.storeCreate.id);
+        
+        // router.push('/dashboard')
         console.log(result)
 
     }).catch(err => {
@@ -275,7 +309,7 @@ const DialogCreateApp = () => {
                 />
               </TabList>
               <TabPanel value='detailsTab' sx={{ flexGrow: 1 }}>
-                <DialogTabDetails fName = {text => setFname(text)} fStore = {text => setFstore(text)} fLfile = {text => setFfile(text)} />
+                <DialogTabDetails fName = {text => setFname(text)} fStore = {text => setFstore(text)} fLfile = {text => setFfile(text)} fmediaID = {text => setMediaId(text)} />
                 {renderTabFooter()}
               </TabPanel>
               <TabPanel value='frameworkTab' sx={{ flexGrow: 1 }}>

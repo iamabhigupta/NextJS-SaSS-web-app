@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useState } from 'react'
+import { Fragment, useState,useEffect } from 'react'
 import axios from 'axios'
 
 // ** MUI Imports
@@ -41,61 +41,60 @@ const HeadingTypography = styled(Typography)(({ theme }) => ({
   }
 }))
 
-const FileUploaderRestrictions = ({fileSrc}) => {
+const FileUploaderRestrictions = ({fileSrc,fLogoId}) => {
 
   // ** State
   const [files, setFiles] = useState([])
+  const [fval, setFval] = useState('')
+
   fileSrc(JSON.stringify(files))
+  fLogoId(fval)
 
- 
+  console.log(files)
+
+
   // console.log(files);
-  const handleChange = () => {
-    console.log(888888)
+  const handleChange = (files) => {
 
-  //   let siteName = "HH";  
-  //   let siteCategory = "";  
-  //   let siteType = "";  
+  //  useEffect(() => {
+ 
 
-  //   let operation = `{ "query": "mutation($site_logo: Upload) { settingUpdateOrCreate(data: {site_name: \\"${siteName}\\", site_category: \\"${siteCategory}\\", site_type: \\"${siteType}\\", site_logo: $site_logo}) {site_name, site_category, site_type, site_logo}}","variables": {"site_logo": null} }`
-  //   var formData = new FormData();
-  //   formData.append('operations', operation);
-  //   formData.append('map', '{"0": ["variables.site_logo"]}');
-  //   formData.append('0', files[0]);
+ //   let operation = `{ "query": "mutation($site_logo: Upload) { settingUpdateOrCreate(data: {site_name: \\"${siteName}\\", site_category: \\"${siteCategory}\\", site_type: \\"${siteType}\\", site_logo: $site_logo}) {site_name, site_category, site_type, site_logo}}","variables": {"site_logo": null} }`
+ 
+    let operation = `{ "query": "mutation($medias: [Upload]) { mediaUpdateOrCreate(data: {type: \\"Logo\\", medias: $medias}) {id, type, src}}","variables": {"medias": [null]} }`
 
-  //   console.log("fordata---response")
+    var formData = new FormData();
+    formData.append('operations', operation);
+    formData.append('map', '{"0": ["variables.medias.0"]}');
+    formData.append('0', files[0]);
 
-  //   for (var key of formData.entries()) {
-  //     console.log(key[0] + ", " + key[1]);
-  // }
+    console.log("fordata---response")
 
-  //    axios.post(process.env.NEXT_PUBLIC_API_ENDPOINT, formData, {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: 'Bearer '+window.localStorage.getItem('accessToken')
-  //       }
-  //   })
-  //       .then(response => console.log(response))
-  //       .catch(error => console.log(error));
+    for (var key of formData.entries()) {
+      console.log(key[0] + ", " + key[1]);
+  }
 
-    // axios({
-    //   url: 'https://1jzxrj179.lp.gql.zone/graphql',
-    //   method: 'post',
-    //   data: {
-    //     query: `
-    //       query PostsForAuthor {
-    //         author(id: 1) {
-    //           firstName
-    //             posts {
-    //               title
-    //               votes
-    //             }
-    //           }
-    //         }
-    //       `
-    //   }
-    // }).then((result) => {
-    //   console.log(result.data)
-    // });
+     axios.post(process.env.NEXT_PUBLIC_API_ENDPOINT, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer '+window.localStorage.getItem('accessToken')
+        }
+    })
+       .then((result) => {
+        
+        setFval(result.data.data.mediaUpdateOrCreate[0].id)
+        localStorage.setItem("mediaId", result.data.data.mediaUpdateOrCreate[0].id);
+        
+
+    }).catch(err => {
+
+
+      console.log(err)
+    })
+
+
+//  }, []);
+    
 
   }
 
@@ -113,6 +112,11 @@ const FileUploaderRestrictions = ({fileSrc}) => {
       setFiles(acceptedFiles.map(file => Object.assign(file)))
       
       // handleChange()
+
+      setTimeout(
+        () => handleChange(acceptedFiles.map(file => Object.assign(file))), 
+        1000
+      );
 
     },
     onDropRejected: () => {
