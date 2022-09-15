@@ -37,7 +37,7 @@ import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
 import FileUploaderMultiple from '../form-elements/file-uploader/FileUploaderMultiple'
 
-const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcategory }) => {
+const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcategory,pffileId }) => {
   // ** States
   const [values, setValues] = useState({
     password: '',
@@ -77,6 +77,9 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
 
   const [storeData, setStoreData] = useState([]);
   const userData = JSON.parse(window.localStorage.getItem('userData'))
+  const [ffileid, setFfileid] = useState();
+
+  pffileId(ffileid)
 
   useEffect(() => {
 
@@ -142,7 +145,7 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
   return (
     <Card>
       <CardHeader title='Product Information' titleTypographyProps={{ variant: 'h6' }} />
-      
+     
       {storeData.length > 0  && (
       <Link target="_blank" href={ process.env.NEXT_PUBLIC_STORE_ADDRESS+storeData[0].site_name } underline="hover"  sx={{
          position:'absolute',
@@ -254,6 +257,7 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
                   ))}
                 </Select>
               </FormControl> */}
+
               <FormControl fullWidth>
                 <Select defaultValue='' displayEmpty inputProps={{ 'aria-label': 'Without label' }}>
                   <MenuItem value=''>
@@ -265,6 +269,16 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
                 </Select>
               </FormControl>
             </Grid>
+
+            <Grid item xs={12}>
+              <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Media (up to 5)</Typography>
+              <DropzoneWrapper>
+                <Grid item xs={12}>
+                  <FileUploaderMultiple fileId = {text => setFfileid(text)} />
+                </Grid>
+              </DropzoneWrapper>
+            </Grid>
+            
             <Grid item xs={12}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Description</Typography>
               <TextField
@@ -274,14 +288,7 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
                 placeholder='Enter product description'
               />
             </Grid>
-            <Grid item xs={12}>
-              <Typography sx={{ mb: 2, fontWeight: 500 }}>Product Media (up to 5)</Typography>
-              <DropzoneWrapper>
-                <Grid item xs={12}>
-                  <FileUploaderMultiple />
-                </Grid>
-              </DropzoneWrapper>
-            </Grid>
+            
           </Grid>
         </form>
       </CardContent>

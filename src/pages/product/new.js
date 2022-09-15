@@ -22,6 +22,7 @@ const Settings = () => {
   const [fpdesc, setFpdesc] = useState("")
   const [fpstore, setFpstore] = useState("")
   const [fpcat, setFpcat] = useState("")
+  const [prffileId, setPrffileId] = useState("")
 
 
   const [storeData, setStoreData] = useState([]);
@@ -63,6 +64,8 @@ const Settings = () => {
 
   const handleClick = (event) => {
     
+    console.log("fileid==============>"+prffileId)
+
     axios({
       url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
       method: 'post',
@@ -80,7 +83,7 @@ const Settings = () => {
           price: ${fprice},
           discount: ${fdprice},
           country_of_origin: "India",
-          media_ids: "${localStorage.getItem("productMediaId")}",
+          media_ids: "${prffileId}",
           stock: 10,
           status: Active,
       }) {
@@ -135,6 +138,8 @@ const Settings = () => {
         fPdesc = {text => setFpdesc(text)} 
         fstore = {text => setFpstore(text)} 
         fcategory = {text => setFpcat(text)} 
+        pffileId = {text => setPrffileId(text)} 
+
         
         />
       </Grid>
@@ -151,7 +156,7 @@ const Settings = () => {
             alignItems: 'center'
           }}
         >
-          <Button type='button' onClick={event => handleClick(event)} color='success' variant='contained' size='large'>
+          <Button disabled={!prffileId} type='button' onClick={event => handleClick(event)} color='success' variant='contained' size='large'>
             Add Product
           </Button>
         </Box>

@@ -40,7 +40,7 @@ const HeadingTypography = styled(Typography)(({ theme }) => ({
   }
 }))
 
-const FileUploaderMultiple = () => {
+const FileUploaderMultiple = ({fileId}) => {
   // ** State
   const [files, setFiles] = useState([])
 
@@ -77,6 +77,7 @@ const FileUploaderMultiple = () => {
       })
          .then((result) => {
                     
+          fileId(result.data.data.mediaUpdateOrCreate[0].id)
           localStorage.setItem("productMediaId", result.data.data.mediaUpdateOrCreate[0].id);
          
   
