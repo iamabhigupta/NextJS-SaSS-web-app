@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import axios from 'axios'
 
 // ** MUI Imports
@@ -105,17 +105,49 @@ const ProductLog = props => {
   }
 
   const handleSubmit = () => {
-    console.log(fdata)
 
-    if (fdata.length > 0) {
-      fdata.forEach((data, index) => {
+    // const [storeData, setStoreData] = useState([]);
+  
+  // useEffect(() => {
+
+  const userData = JSON.parse(window.localStorage.getItem('userData'))
+
+    axios({
+      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      method: 'post',
+      data:{   
+    query: `
+    query {
+      storeFindAllByUser(user_id: ${userData.id}) {
+          id,
+          user_id,
+          name,
+          site_name,
+          description,
+          image,
+          status,
+          created_at,
+          updated_at
+      }
+  }`    
+    },
+    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+      }).then((result) => {      
+        // console.log(result.data.data.storeFindAllByUser)
+        // setStoreData(result.data.data.storeFindAllByUser)
+
+        if (fdata.length > 0) {
+          fdata.forEach((data, index) => {
+
         axios({
-          url: process.env.NEXT_PUBLIC_API_ENDPOINT,
+          url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
           method: 'post',
-          data: {
-            query: `
+          data:{   
+        query: `
+              
         mutation {
           productCreate(data: {
+              store_id: ${result.data.data.storeFindAllByUser[0].id},
               category_id: 1,
               title: "${data.title}",
               short_description: "${data.short_description}",
@@ -124,9 +156,12 @@ const ProductLog = props => {
               price: ${data.price},
               discount: ${data.discount},
               country_of_origin: "India",
+              media_ids: "1",
+              stock: 10,
               status: Active,
           }) {
               id,
+              store_id,
               category_id,
               title,
               short_description,
@@ -135,10 +170,7 @@ const ProductLog = props => {
               price,
               discount,
               country_of_origin,
-              medias {
-                  id,
-                  src
-              },
+              image,
               attributes {
                   name,
                   value
@@ -153,14 +185,80 @@ const ProductLog = props => {
               created_at,
               updated_at
           }
-      } `
-          },
-          headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
-        }).then(result => {
-          console.log(result)
+      }   
+       
+            `    
+        },
+        headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+          }).then((result) => {      
+            console.log(result)
+            router.push('/product')
+    
         })
+
       })
     }
+
+    })
+  
+  
+  // }, []);
+    // console.log(fdata)
+
+    // if (fdata.length > 0) {
+    //   fdata.forEach((data, index) => {
+    //     axios({
+    //       url: process.env.NEXT_PUBLIC_API_ENDPOINT,
+    //       method: 'post',
+    //       data: {
+    //         query: `
+    //     mutation {
+    //       productCreate(data: {
+    //           category_id: 1,
+    //           title: "${data.title}",
+    //           short_description: "${data.short_description}",
+    //           long_description: "${data.short_description}",
+    //           html_content: "${data.short_description}",
+    //           price: ${data.price},
+    //           discount: ${data.discount},
+    //           country_of_origin: "India",
+    //           status: Active,
+    //       }) {
+    //           id,
+    //           category_id,
+    //           title,
+    //           short_description,
+    //           long_description,
+    //           html_content,
+    //           price,
+    //           discount,
+    //           country_of_origin,
+    //           medias {
+    //               id,
+    //               src
+    //           },
+    //           attributes {
+    //               name,
+    //               value
+    //           },
+    //           faqs {
+    //               id,
+    //               question,
+    //               answer,
+    //           },
+    //           stock,
+    //           status,
+    //           created_at,
+    //           updated_at
+    //       }
+    //   } `
+    //       },
+    //       headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
+    //     }).then(result => {
+    //       console.log(result)
+    //     })
+    //   })
+    // }
 
     router.push('/product')
   }
