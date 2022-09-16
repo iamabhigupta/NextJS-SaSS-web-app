@@ -26,9 +26,10 @@ const Settings = () => {
 
 
   const [storeData, setStoreData] = useState([]);
-  const userData = JSON.parse(window.localStorage.getItem('userData'))
   
   useEffect(() => {
+
+  const userData = JSON.parse(window.localStorage.getItem('userData'))
 
     axios({
       url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
@@ -57,7 +58,7 @@ const Settings = () => {
     })
   
   
-  }, [userData]);
+  }, []);
 
   // const productMediaId = localStorage.getItem("productMediaId")
 

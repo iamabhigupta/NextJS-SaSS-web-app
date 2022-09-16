@@ -76,12 +76,13 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
   const [categoryw, setCategoryw] = useState([]);
 
   const [storeData, setStoreData] = useState([]);
-  const userData = JSON.parse(window.localStorage.getItem('userData'))
   const [ffileid, setFfileid] = useState();
 
   pffileId(ffileid)
 
   useEffect(() => {
+
+  const userData = JSON.parse(window.localStorage.getItem('userData'))
 
     axios({
       url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
@@ -140,7 +141,7 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
     })
   
   
-  }, [userData]);
+  }, []);
 
   return (
     <Card>
