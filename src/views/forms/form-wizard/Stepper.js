@@ -1,11 +1,13 @@
 // ** React Imports
-import { useState,useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
+import ProductPopup from 'src/views/apps/email/ProductPopup'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Card from '@mui/material/Card'
+import Modal from '@mui/material/Modal'
 import Dialog from '@mui/material/Dialog'
 import Step from '@mui/material/Step'
 import Button from '@mui/material/Button'
@@ -83,6 +85,10 @@ const StepperVerticalWithoutNumbers = () => {
   // ** States
   const [open, setOpen] = useState(false)
 
+  const [openModal, setOpenModal] = useState(false)
+  const handleModalOpen = () => setOpenModal(true)
+  const handleModalClose = () => setOpenModal(false)
+
   // const [selectedValue, setSelectedValue] = useState(categories[1])
   const handleClickOpen = () => setOpen(true)
   const handleDialogClose = () => setOpen(false)
@@ -119,18 +125,16 @@ const StepperVerticalWithoutNumbers = () => {
 
   const [category, setCategory] = useState('')
 
-  const [storeData, setStoreData] = useState([]);
-  
-  
+  const [storeData, setStoreData] = useState([])
+
   useEffect(() => {
-  
-  let userData = JSON.parse(window.localStorage.getItem("userData"))
+    let userData = JSON.parse(window.localStorage.getItem('userData'))
 
     axios({
-      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      url: process.env.NEXT_PUBLIC_API_ENDPOINT,
       method: 'post',
-      data:{   
-    query: `
+      data: {
+        query: `
     query {
       storeFindAllByUser(user_id: ${userData.id}) {
           id,
@@ -143,27 +147,22 @@ const StepperVerticalWithoutNumbers = () => {
           created_at,
           updated_at
       }
-  }`    
-    },
-    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
-      }).then((result) => {      
-        console.log(result.data.data.storeFindAllByUser)
-        setStoreData(result.data.data.storeFindAllByUser)  
-  
+  }`
+      },
+      headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
+    }).then(result => {
+      console.log(result.data.data.storeFindAllByUser)
+      setStoreData(result.data.data.storeFindAllByUser)
     })
-  
-  
-  
-  
-  }, []);
+  }, [])
 
-  const handleChange = (categoryName) => {
+  const handleChange = categoryName => {
     // setCategory(e.target.value)
-    var sId = "";
-    if(storeData.length > 0){
-      sId = storeData[0].id;
-    }else{      
-      sId = localStorage.getItem("store_id");
+    var sId = ''
+    if (storeData.length > 0) {
+      sId = storeData[0].id
+    } else {
+      sId = localStorage.getItem('store_id')
     }
 
     axios({
@@ -343,7 +342,7 @@ const StepperVerticalWithoutNumbers = () => {
               </StepLabel>
               <StepContent>
                 <Link>
-                  <Button variant='contained' onClick={addProduct}>
+                  <Button variant='contained' onClick={handleModalOpen}>
                     Add Product
                   </Button>
                 </Link>
@@ -374,6 +373,15 @@ const StepperVerticalWithoutNumbers = () => {
           </Box>
         )}
       </CardContent>
+      {/* Model  */}
+      <Modal open={openModal} onClose={handleModalClose}>
+        <Box
+          onClose={handleModalClose}
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}
+        >
+          <ProductPopup folder='inbox' />
+        </Box>
+      </Modal>
     </Card>
   )
 }

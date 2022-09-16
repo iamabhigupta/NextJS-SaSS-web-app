@@ -9,15 +9,6 @@ import Typography from '@mui/material/Typography'
 
 import Modal from '@mui/material/Modal'
 import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import Divider from '@mui/material/Divider'
-
-import FormGroup from '@mui/material/FormGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
 import Grid from '@mui/material/Grid'
 import { useRouter } from 'next/router'
 
@@ -166,44 +157,6 @@ const SelectCategory = () => {
         aria-labelledby='modal-modal-title'
         aria-describedby='modal-modal-description'
       >
-        {/* <Box sx={style}>
-          <Typography id='modal-modal-title' variant='h6' component='h2'>
-            Dummy Readymade product data !
-          </Typography>
-          <Divider />
-
-          <nav aria-label='main mailbox folders'>
-            <List>
-              {rows.map((data, i) => {
-                return (
-                  <>
-                    <ListItem disablePadding>
-                      <ListItemButton>
-                        <ListItemIcon>
-                          <FormGroup>
-                            <FormControlLabel
-                              control={<Checkbox />}
-                              label={data.title}
-                              value={data.id}
-                              onChange={e => handleChange(e, data)}
-                            />
-                          </FormGroup>
-                        </ListItemIcon>
-                      </ListItemButton>
-                    </ListItem>
-                    <Divider />
-                  </>
-                )
-              })}
-            </List>
-          </nav>
-
-          <Grid container direction='row' justifyContent='right'>
-            <Button variant='contained' item onClick={handleSubmit}>
-              Submit
-            </Button>
-          </Grid>
-        </Box> */}
         <Box
           onClose={handleClose}
           style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}

@@ -8,6 +8,7 @@ import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
+import Modal from '@mui/material/Modal'
 import Card from '@mui/material/Card'
 import Menu from '@mui/material/Menu'
 import Grid from '@mui/material/Grid'
@@ -50,9 +51,6 @@ import TableHeader from 'src/views/apps/user/list/TableHeader'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
 
 // ** import { rows } from 'src/@fake-db/table/product-list-data'
-
-
-
 
 // ** Vars
 const userRoleObj = {
@@ -199,9 +197,9 @@ const columns = [
               </Typography>
             </Link> */}
             {/* <Link href={`/apps/user/view/${id}`} passHref> */}
-              <Typography noWrap component='a' variant='caption' sx={{ textDecoration: 'none' }}>
+            <Typography noWrap component='a' variant='caption' sx={{ textDecoration: 'none' }}>
               {row.title}
-              </Typography>
+            </Typography>
             {/* </Link> */}
           </Box>
         </Box>
@@ -266,8 +264,8 @@ const columns = [
         />
       )
     }
-  },
- 
+  }
+
   // {
   //   flex: 0.1,
   //   minWidth: 90,
@@ -276,7 +274,6 @@ const columns = [
   //   headerName: 'Image',
   //   renderCell: ({ row }) => <RowOptions id={row.id} />
   // }
-  
 ]
 
 const Product = () => {
@@ -289,20 +286,19 @@ const Product = () => {
   const [addUserOpen, setAddUserOpen] = useState(false)
   const router = useRouter()
 
-  const [rows, setRows] = useState([]);
-  const [storeData, setStoreData] = useState([]);
-  
+  const [rows, setRows] = useState([])
+  const [storeData, setStoreData] = useState([])
+
   useEffect(() => {
+    var sname = ''
 
-    var sname = "";
-
-  const userData = JSON.parse(window.localStorage.getItem('userData'))
+    const userData = JSON.parse(window.localStorage.getItem('userData'))
 
     axios({
-      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      url: process.env.NEXT_PUBLIC_API_ENDPOINT,
       method: 'post',
-      data:{   
-    query: `
+      data: {
+        query: `
     query {
       storeFindAllByUser(user_id: ${userData.id}) {
           id,
@@ -315,29 +311,26 @@ const Product = () => {
           created_at,
           updated_at
       }
-  }`    
-    },
-    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
-      }).then((result) => {      
-        console.log(result.data.data.storeFindAllByUser)
-        setStoreData(result.data.data.storeFindAllByUser)
+  }`
+      },
+      headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
+    }).then(result => {
+      console.log(result.data.data.storeFindAllByUser)
+      setStoreData(result.data.data.storeFindAllByUser)
 
-   
+      if ((result.data.data.storeFindAllByUser || []).length === 0) {
+        sname = '#@'
+      }
 
-        if((result.data.data.storeFindAllByUser || []).length === 0){
-          sname = "#@"
-        }
-        
-        if((result.data.data.storeFindAllByUser || []).length > 0){
+      if ((result.data.data.storeFindAllByUser || []).length > 0) {
+        sname = result.data.data.storeFindAllByUser[0].site_name
+      }
 
-          sname = result.data.data.storeFindAllByUser[0].site_name;
-        }
-
-        axios({
-          url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
-          method: 'post',
-          data:{   
-        query: `
+      axios({
+        url: process.env.NEXT_PUBLIC_API_ENDPOINT,
+        method: 'post',
+        data: {
+          query: `
         query {
           productFindAllBySiteName(site_name: "${sname}") {
               id,
@@ -365,27 +358,20 @@ const Product = () => {
               created_at,
               updated_at
           }
-      }`    
+      }`
         },
-        headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
-          }).then((result) => {      
-            console.log(result.data.data.productFindAllBySiteName)
+        headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
+      }).then(result => {
+        console.log(result.data.data.productFindAllBySiteName)
 
-            if((result.data.data.productFindAllBySiteName || []).length > 0){
-            setRows(result.data.data.productFindAllBySiteName)
-            }else{
-
-              setRows([])
-            }
-    
-        })
-
+        if ((result.data.data.productFindAllBySiteName || []).length > 0) {
+          setRows(result.data.data.productFindAllBySiteName)
+        } else {
+          setRows([])
+        }
+      })
     })
-
- 
-  
-  
-  }, []);
+  }, [])
 
   // ** Hooks
   const dispatch = useDispatch()
