@@ -127,6 +127,8 @@ const StepperVerticalWithoutNumbers = () => {
 
   const [storeData, setStoreData] = useState([])
 
+  const [isCategory, setIsCategory] = useState(false)
+
   useEffect(() => {
     let userData = JSON.parse(window.localStorage.getItem('userData'))
 
@@ -153,6 +155,49 @@ const StepperVerticalWithoutNumbers = () => {
     }).then(result => {
       console.log(result.data.data.storeFindAllByUser)
       setStoreData(result.data.data.storeFindAllByUser)
+
+      if(result.data.data.storeFindAllByUser.length > 0){
+         let storeId = result.data.data.storeFindAllByUser[0].id;
+
+        axios({
+          url: process.env.NEXT_PUBLIC_API_ENDPOINT,
+          method: 'post',
+          data: {
+            query: `
+            query {
+              productCategoryFindAllByStore(store_id: ${storeId}) {
+                  id,
+                  store_id,
+                  name,
+                  slug,
+                  image,
+                  attributes {
+                      id,
+                      name,
+                      status
+                  }
+                  status,
+                  created_at,
+                  updated_at
+              }
+          }`
+          },
+          headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
+        }).then(result => {
+
+          console.log(result.data.data.productCategoryFindAllByStore)
+
+          if(result.data.data.productCategoryFindAllByStore.length > 0){
+          
+            setIsCategory(true);
+       
+          }
+    
+    
+        })
+
+      }
+
     })
   }, [])
 
@@ -200,6 +245,39 @@ const StepperVerticalWithoutNumbers = () => {
   }
 
   return (
+
+    <>  
+    
+    {isCategory && 
+      <Card>
+      <CardHeader title='Your setup is finished...' titleTypographyProps={{ variant: 'h6' }} />
+      <CardContent>
+        <img style={{width: '10%'}} src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Flat_tick_icon.svg/1024px-Flat_tick_icon.svg.png"/>
+      </CardContent>
+
+      <Link
+
+      target='_blank'
+      sx={{
+        color: '#b11f1f',  
+        'margin-left': '20px',  
+        
+      }}
+       href={process.env.NEXT_PUBLIC_STORE_ADDRESS+storeData[0].site_name} color="inherit">
+      {process.env.NEXT_PUBLIC_STORE_ADDRESS+storeData[0].site_name}
+      </Link>
+
+      <CardHeader title='' titleTypographyProps={{ variant: 'h6' }} />
+
+
+      
+     
+
+      </Card>
+     }
+    
+      {!isCategory && 
+
     <Card>
       <CardHeader title='Finish your store setup...' titleTypographyProps={{ variant: 'h6' }} />
       <CardContent>
@@ -243,7 +321,6 @@ const StepperVerticalWithoutNumbers = () => {
               </StepLabel>
               <StepContent>
                 <div>
-                  {/* <Button variant='contained'>Select Category</Button> */}
                   <TextField
                     id='outlined-basic'
                     size='small'
@@ -253,20 +330,13 @@ const StepperVerticalWithoutNumbers = () => {
                     onChange={handleChange}
                   />
 
-                  {/* <Typography variant='subtitle1' sx={{ mb: 2 }}>
-        Selected: {selectedValue}
-      </Typography> */}
                   <Dialog onClose={handleDialogClose} aria-labelledby='simple-dialog-title' open={open}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <DialogTitle id='simple-dialog-title'>Choose business category</DialogTitle>
                       <div style={{ paddingRight: '30px', cursor: 'pointer' }}>
                         <Close onClick={handleDialogClose} />
                       </div>
-                      {/* <ListItemAvatar>
-            <MuiAvatar>
-              <Close  />
-            </MuiAvatar>
-          </ListItemAvatar> */}
+                  
                     </div>
                     <List sx={{ pt: 0, px: '0 !important' }}>
                       {categories.map(category => (
@@ -295,26 +365,7 @@ const StepperVerticalWithoutNumbers = () => {
                   </Dialog>
                 </div>
 
-                {/* <Link target='_blank' href='/categories'>
-                  <Button variant='contained'>Add Category</Button>
-                </Link> */}
-
-                {/* <FormControl sx={{ m: 1, minWidth: 120 }} size='small'> */}
-                {/* <InputLabel id="demo-select-small">Category</InputLabel> */}
-
-                {/* <Select
-                    labelId='demo-select-small'
-                    id='demo-select-small'
-                    value={category}
-                    // label="Age"
-
-                    onChange={handleChange}
-                  >
-                    <MenuItem value={'Groceries'}>Groceries</MenuItem>
-                    <MenuItem value={'Mobile'}>Mobile</MenuItem>
-                    <MenuItem value={'Laptop'}>Laptop</MenuItem>
-                  </Select>
-                </FormControl> */}
+            
                 <div className='button-wrapper'>
                   <Button
                     size='small'
@@ -383,6 +434,9 @@ const StepperVerticalWithoutNumbers = () => {
         </Box>
       </Modal>
     </Card>
+}
+</>
+
   )
 }
 
