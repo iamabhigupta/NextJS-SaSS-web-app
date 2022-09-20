@@ -143,19 +143,14 @@ const LoginPage = () => {
   let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (regEmail.test(email)) {
 
-    setTimeout(
-      function() {
-        auth.login({ email, password }, () => {
-          setError('email', {
-            type: 'manual',
-            message: 'Email or Password is invalid'
-          })
-        })  
-      }
-      .bind(this),
-      3000
-  );
-  
+    handleSubmit(
+    auth.login({ email, password }, () => {
+      setError('email', {
+        type: 'manual',
+        message: 'Email or Password is invalid'
+      })
+    })    
+    )
   }
   }
   
