@@ -24,11 +24,12 @@ const New = () => {
   });
 
 
-  let userData = JSON.parse(window.localStorage.getItem("userData"))
   const [storeData, setStoreData] = useState([]);
 
 
   useEffect(() => {
+    
+    let userData = JSON.parse(window.localStorage.getItem("userData"))
 
     axios({
       url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,

@@ -63,7 +63,7 @@ const AuthProvider = ({ children }) => {
   }, [])
 
   const handleLogin = (params, errorCallback) => {
-
+   console.log(params)
     axios({
       url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
       method: 'post',
