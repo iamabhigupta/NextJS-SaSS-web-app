@@ -102,11 +102,16 @@ const AuthProvider = ({ children }) => {
           Authorization: window.localStorage.getItem(authConfig.storageTokenKeyName)
         }
       })
-      const returnUrl = router.query.returnUrl
-      setUser({ ...result.data.data.login.user })
+   
+      // const returnUrl = router.query.returnUrl
+     
+     setUser({ ...result.data.data.login.user })
       window.localStorage.setItem('userData', JSON.stringify(result.data.data.login.user))
-      const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-      router.replace(redirectURL)
+   
+      // const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+    
+      router.push('/dashboard')
+      
     }).catch(err => {
       if (errorCallback) errorCallback(err)
     })

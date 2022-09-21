@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState,useRef } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -112,6 +112,8 @@ const defaultValues = {
 }
 
 const LoginPage = () => {
+
+
   const [showPassword, setShowPassword] = useState(false)
 
   // ** Hooks
@@ -142,6 +144,7 @@ const LoginPage = () => {
   const password = 'J7$#@!fgh';
   let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (regEmail.test(email)) {
+
 
     handleSubmit(
     auth.login({ email, password }, () => {
@@ -281,7 +284,7 @@ const LoginPage = () => {
                   Client: <strong>client@materialize.com</strong> / Pass: <strong>client</strong>
                 </Typography>
               </Alert>
-              <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
+              <form noValidate autoComplete='off' >
                 <FormControl fullWidth sx={{ mb: 4 }}>
                   <Controller
                     name='email'
@@ -345,7 +348,7 @@ const LoginPage = () => {
                     </Typography>
                   </Link>
                 </Box>
-                <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }}>
+                <Button onClick={handleSubmit(onSubmit)} fullWidth size='large' type='button' variant='contained' sx={{ mb: 7 }}>
                   Login
                 </Button>
                 <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
