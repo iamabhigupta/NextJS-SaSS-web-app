@@ -1,5 +1,6 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import axios from 'axios'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -17,7 +18,7 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Data Import
-import { rows } from 'src/@fake-db/table/static-data'
+// import { rows } from 'src/@fake-db/table/static-data'
 
 // ** renders client column
 const renderClient = params => {
@@ -25,15 +26,7 @@ const renderClient = params => {
   const stateNum = Math.floor(Math.random() * 6)
   const states = ['success', 'error', 'warning', 'info', 'primary', 'secondary']
   const color = states[stateNum]
-  if (row.avatar.length) {
-    return <CustomAvatar src={`/images/avatars/${row.avatar}`} sx={{ mr: 3, width: '1.875rem', height: '1.875rem' }} />
-  } else {
-    return (
-      <CustomAvatar skin='light' color={color} sx={{ mr: 3, fontSize: '.8rem', width: '1.875rem', height: '1.875rem' }}>
-        {getInitials(row.full_name ? row.full_name : 'John Doe')}
-      </CustomAvatar>
-    )
-  }
+  
 }
 
 const statusObj = {
@@ -45,6 +38,79 @@ const statusObj = {
 }
 
 const TableSort = () => {
+
+  // const rows = [
+  //   {
+  //     id: 1,
+  //     full_name: "Korrie O'Crevy",
+  //     post: 'Nuclear Power Engineer',
+  //     email: 'kocrevy0@thetimes.co.uk',
+  //     city: 'Krasnosilka',
+  //     start_date: '09/23/2016',
+  //     salary: 23896.35,
+  //     age: '61',
+  //     experience: '1 Year',
+  //     status: 2
+  //   },
+  //   {
+  //     id: 7,
+  //     full_name: 'Eileen Diehn',
+  //     post: 'Environmental Specialist',
+  //     email: 'ediehn6@163.com',
+  //     city: 'Lampuyang',
+  //     start_date: '10/15/2017',
+  //     salary: 18991.67,
+  //     age: '59',
+  //     experience: '9 Years',
+  //     status: 3
+  //   }];
+
+  const [rows, setRows] = useState([])
+
+
+    useEffect(() => {
+     
+      axios({
+        url: process.env.NEXT_PUBLIC_API_ENDPOINT,
+        method: 'post',
+        data: {
+          query: `
+          query {
+            orderFindAll {
+                id,
+                store_id,
+                user_id,
+                initial_price,
+                delivery_fee,
+                total_price,
+                shipping_address,
+                billing_address,
+                items {
+                    id,
+                    product_id,
+                    quantity,
+                    price,
+                    total_price
+                },
+                status,
+                created_at,
+                updated_at
+            }
+        }`
+        },
+        headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
+      }).then(result => {
+        console.log(result.data.data.orderFindAll)
+        setRows(result.data.data.orderFindAll)
+  
+      })
+
+
+    }, [])
+
+
+
+
   // ** States
   const [pageSize, setPageSize] = useState(7)
   const [isNameSortable, setIsNameSortable] = useState(true)
@@ -64,7 +130,7 @@ const TableSort = () => {
             {renderClient(params)}
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
-                {row.full_name}
+                {row.user_id}
               </Typography>
               <Typography noWrap variant='caption'>
                 {row.email}
@@ -94,7 +160,7 @@ const TableSort = () => {
       sortable: isNameSortable,
       renderCell: params => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.start_date}
+          {params.row.created_at}
         </Typography>
       )
     },
@@ -117,14 +183,14 @@ const TableSort = () => {
       headerName: 'Status',
       sortable: isNameSortable,
       renderCell: params => {
-        const status = statusObj[params.row.status]
+        const status = statusObj['Pending']
 
         return (
           <CustomChip
             size='small'
             skin='light'
-            color={status.color}
-            label={status.title}
+            color='warning'
+            label='Pending'
             sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
           />
         )
