@@ -108,38 +108,40 @@ const FormLayoutsBasic = ({ fName, fCatName, fPrice, fDprice, fPdesc,fstore,fcat
         console.log(result.data.data.storeFindAllByUser)
         setStoreData(result.data.data.storeFindAllByUser)
 
-    })
-
-    axios({
-      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
-      method: 'post',
-      data:{   
-    query: `
-    query {
-      productCategoryFindAll {
-          id,
-          store_id,
-          name,
-          slug,
-          image,
-          attributes {
+        axios({
+          url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+          method: 'post',
+          data:{   
+        query: `
+        query {
+          productCategoryFindAllByStore(store_id: ${result.data.data.storeFindAllByUser[0].id}) {
               id,
+              store_id,
               name,
-              status
+              slug,
+              image,
+              attributes {
+                  id,
+                  name,
+                  status
+              }
+              status,
+              created_at,
+              updated_at
           }
-          status,
-          created_at,
-          updated_at
-      }
-  }`    
-    },
-    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
-      }).then((result) => {      
-        console.log(result.data.data.productCategoryFindAll)
-        setCategoryw(result.data.data.productCategoryFindAll)
+      }`    
+        },
+        headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+          }).then((result) => {      
+            console.log(result.data.data.productCategoryFindAllByStore)
+            setCategoryw(result.data.data.productCategoryFindAllByStore)
+    
+        })
 
     })
-  
+
+
+ 
   
   }, []);
 

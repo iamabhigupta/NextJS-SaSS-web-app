@@ -226,37 +226,67 @@ const InvoiceList = () => {
 
   useEffect(() => {
 
-    axios({
-      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
-      method: 'post',
-      data:{   
-    query: `
-    query {
-      productCategoryFindAll {
-          id,
-          store_id,
-          name,
-          slug,
-          image,
-          attributes {
-              id,
-              name,
-              status
-          }
-          status,
-          created_at,
-          updated_at
-      }
-  }`    
-    },
-    headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
-      }).then((result) => {      
-        console.log(result.data.data.productCategoryFindAll)
-        setRows(result.data.data.productCategoryFindAll)
-    })
+    const userData = JSON.parse(window.localStorage.getItem('userData'))
+  
+      axios({
+        url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+        method: 'post',
+        data:{   
+      query: `
+      query {
+        storeFindAllByUser(user_id: ${userData.id}) {
+            id,
+            user_id,
+            name,
+            site_name,
+            description,
+            image,
+            status,
+            created_at,
+            updated_at
+        }
+    }`    
+      },
+      headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+        }).then((result) => {      
+          console.log(result.data.data.storeFindAllByUser)     
+  
+          axios({
+            url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+            method: 'post',
+            data:{   
+          query: `
+          query {
+            productCategoryFindAllByStore(store_id: ${result.data.data.storeFindAllByUser[0].id}) {
+                id,
+                store_id,
+                name,
+                slug,
+                image,
+                attributes {
+                    id,
+                    name,
+                    status
+                }
+                status,
+                created_at,
+                updated_at
+            }
+        }`    
+          },
+          headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
+            }).then((result) => {      
+              console.log(result.data.data.productCategoryFindAllByStore)
+              setRows(result.data.data.productCategoryFindAllByStore)
+      
+          })
+  
+      })
   
   
-  }, []);
+   
+    
+    }, []);
 
   // ** Hooks
   const dispatch = useDispatch()
