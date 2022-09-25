@@ -392,8 +392,8 @@ const StepperVerticalWithoutNumbers = () => {
                 </div>
               </StepLabel>
               <StepContent>
-                <Link>
-                  <Button variant='contained' onClick={handleModalOpen}>
+                <Link href="/readymade">
+                  <Button variant='contained' >
                     Add Product
                   </Button>
                 </Link>
