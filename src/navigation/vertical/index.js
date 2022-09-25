@@ -69,9 +69,14 @@ const navigation = () => {
         {
           title: 'Select Category',
           path: '/product/select-category'
+        },
+        {
+          title: 'Readymade Product',
+          path: '/readymade'
         }
       ]
     },
+    
     {
       title: 'Customers',
       icon: AccountSupervisor,

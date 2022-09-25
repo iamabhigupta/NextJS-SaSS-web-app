@@ -34,14 +34,15 @@ const MenuBasic = () => {
         <ChevronDown />
       </Button>
       <Menu
-        sx={{ marginLeft: '-30px', marginTop: '10px' }}
-        keepMounted
-        id='simple-menu'
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        open={Boolean(anchorEl)}
+      
+      // sx={{ marginLeft: '-30px', marginTop: '10px' }}
+        // keepMounted
+        // id='simple-menu'
+        // anchorEl={anchorEl}
+        // onClose={handleClose}
+        // open={Boolean(anchorEl)}
       >
-        <Link href='/product/select-category'>
+        {/* <Link href='/product/select-category'>
           <MenuItem onClick={handleClose}>Readymade Category</MenuItem>
         </Link>
         <Link href='/product/select-category'>
@@ -49,7 +50,8 @@ const MenuBasic = () => {
         </Link>
         <Link href='/product/select-category'>
           <MenuItem onClick={handleClose}>Bulk edit Products </MenuItem>
-        </Link>
+        </Link> */}
+    
       </Menu>
     </div>
   )
