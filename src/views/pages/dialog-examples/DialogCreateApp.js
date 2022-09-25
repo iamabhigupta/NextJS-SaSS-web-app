@@ -89,6 +89,8 @@ const DialogCreateApp = () => {
     setActiveTab('detailsTab')
   }
 
+
+
   const [fname, setFname] = useState("")
   const [fstore, setFstore] = useState("")
   const [fetype, setFetype] = useState("")
@@ -136,11 +138,8 @@ const DialogCreateApp = () => {
     },
     headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
 
-      }).then((result) => {
-      
-        localStorage.setItem("store_id", result.data.data.storeCreate.id);
-        
-        // router.push('/dashboard')
+      }).then((result) => {      
+       localStorage.setItem("store_id", result.data.data.storeCreate.id);
         console.log(result)
 
     }).catch(err => {

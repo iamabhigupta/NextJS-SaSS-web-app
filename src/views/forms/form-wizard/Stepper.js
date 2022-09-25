@@ -190,6 +190,8 @@ const StepperVerticalWithoutNumbers = () => {
           if(result.data.data.productCategoryFindAllByStore.length > 0){
           
             setIsCategory(true);
+            localStorage.removeItem("store_id");
+
        
           }
     
