@@ -26,7 +26,7 @@ const Settings = () => {
 
 
   const [storeData, setStoreData] = useState([]);
-  
+
   useEffect(() => {
 
   const userData = JSON.parse(window.localStorage.getItem('userData'))
@@ -34,7 +34,7 @@ const Settings = () => {
     axios({
       url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
       method: 'post',
-      data:{   
+      data:{
     query: `
     query {
       storeFindAllByUser(user_id: ${userData.id}) {
@@ -48,31 +48,31 @@ const Settings = () => {
           created_at,
           updated_at
       }
-  }`    
+  }`
     },
     headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
-      }).then((result) => {      
+      }).then((result) => {
         console.log(result.data.data.storeFindAllByUser)
         setStoreData(result.data.data.storeFindAllByUser)
 
     })
-  
-  
+
+
   }, []);
 
   // const productMediaId = localStorage.getItem("productMediaId")
 
 
   const handleClick = (event) => {
-    
+
     console.log("fileid==============>"+prffileId)
 
     axios({
       url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
       method: 'post',
-      data:{   
+      data:{
     query: `
-          
+
     mutation {
       productCreate(data: {
           store_id: ${storeData[0].id},
@@ -113,12 +113,12 @@ const Settings = () => {
           created_at,
           updated_at
       }
-  }   
-   
-        `    
+  }
+
+        `
     },
     headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
-      }).then((result) => {      
+      }).then((result) => {
         console.log(result)
         router.push('/product')
 
@@ -131,17 +131,17 @@ const Settings = () => {
     <Grid container spacing={6} className='match-height'>
 
       <Grid item xs={12}>
-        <FormLayoutsBasic 
-        fName = {text => setFname(text)} 
-        fCatName = {text => setFcatname(text)} 
-        fDprice = {text => setFdprice(text)} 
-        fPrice = {text => setFprice(text)} 
-        fPdesc = {text => setFpdesc(text)} 
-        fstore = {text => setFpstore(text)} 
-        fcategory = {text => setFpcat(text)} 
-        pffileId = {text => setPrffileId(text)} 
+        <FormLayoutsBasic
+        fName = {text => setFname(text)}
+        fCatName = {text => setFcatname(text)}
+        fDprice = {text => setFdprice(text)}
+        fPrice = {text => setFprice(text)}
+        fPdesc = {text => setFpdesc(text)}
+        fstore = {text => setFpstore(text)}
+        fcategory = {text => setFpcat(text)}
+        pffileId = {text => setPrffileId(text)}
 
-        
+
         />
       </Grid>
       {/* <Grid item xs={12} sx={{ pt: theme => `${theme.spacing(4)} !important` }}>
