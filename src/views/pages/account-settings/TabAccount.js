@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -20,6 +20,7 @@ import Button from '@mui/material/Button'
 
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close'
+import axios from 'axios'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -49,6 +50,36 @@ const TabAccount = () => {
   // ** State
   const [openAlert, setOpenAlert] = useState(true)
   const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
+
+  const [values, setValues] = useState({ email: '', username: '', name: '', role: '', status: '', company: '' })
+
+  const user = JSON.parse(`${localStorage.getItem('userData')}`)
+
+  useEffect(() => {
+    if (user && user?.id) {
+      axios({
+        url: process.env.NEXT_PUBLIC_API_ENDPOINT,
+        method: 'post',
+        data: {
+          query: `
+        query getUser {
+          userFindOne(id:${user.id}){
+          name
+          username
+          # phone
+          email
+          role_id
+          status
+  }
+}`
+        },
+        headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
+      }).then(result => {
+        console.log(result.data.data.userFindOne)
+        setValues(result.data.data.userFindOne)
+      })
+    }
+  }, [])
 
   const onChange = file => {
     const reader = new FileReader()
@@ -88,32 +119,33 @@ const TabAccount = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Username' placeholder='johnDoe' defaultValue='johnDoe' />
+            <TextField fullWidth label='Username' value={values['username']} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Name' placeholder='John Doe' defaultValue='John Doe' />
+            <TextField fullWidth label='Name' placeholder='John Doe' value={values['name']} />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               type='email'
               label='Email'
-              placeholder='johnDoe@example.com'
-              defaultValue='johnDoe@example.com'
+              value={values['email']}
+              // placeholder='johnDoe@example.com'
+              // defaultValue='johnDoe@example.com'
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>Role</InputLabel>
-              <Select label='Role' defaultValue='admin'>
-                <MenuItem value='admin'>Admin</MenuItem>
-                <MenuItem value='author'>Author</MenuItem>
-                <MenuItem value='editor'>Editor</MenuItem>
-                <MenuItem value='maintainer'>Maintainer</MenuItem>
-                <MenuItem value='subscriber'>Subscriber</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
+          {/*<Grid item xs={12} sm={6}>*/}
+          {/*  <FormControl fullWidth>*/}
+          {/*    <InputLabel>Role</InputLabel>*/}
+          {/*    <Select label='Role' defaultValue='admin'>*/}
+          {/*      <MenuItem value='admin'>Admin</MenuItem>*/}
+          {/*      <MenuItem value='author'>Author</MenuItem>*/}
+          {/*      <MenuItem value='editor'>Editor</MenuItem>*/}
+          {/*      <MenuItem value='maintainer'>Maintainer</MenuItem>*/}
+          {/*      <MenuItem value='subscriber'>Subscriber</MenuItem>*/}
+          {/*    </Select>*/}
+          {/*  </FormControl>*/}
+          {/*</Grid>*/}
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
