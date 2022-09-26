@@ -17,13 +17,6 @@ const Settings = () => {
   const router = useRouter()
 
   const [fname, setFname] = useState('')
-  const [fcatname, setFcatname] = useState('')
-  const [fdprice, setFdprice] = useState('')
-  const [fprice, setFprice] = useState('')
-  const [fpdesc, setFpdesc] = useState('')
-  const [fpstore, setFpstore] = useState('')
-  const [fpcat, setFpcat] = useState('')
-  const [prffileId, setPrffileId] = useState('')
 
   const [loading, setLoading] = useState(false)
 
@@ -145,18 +138,7 @@ const Settings = () => {
   return (
     <Grid container spacing={6} className='match-height'>
       <Grid item xs={12}>
-        <FormLayoutsBasic2
-          setMainValues={setValues}
-          mainValues={values}
-          // fName={text => setFname(text)}
-          // fCatName={text => setFcatname(text)}
-          // fDprice={text => setFdprice(text)}
-          // fPrice={text => setFprice(text)}
-          // fPdesc={text => setFpdesc(text)}
-          // fstore={text => setFpstore(text)}
-          // fcategory={text => setFpcat(text)}
-          // pffileId={text => setPrffileId(text)}
-        />
+        <FormLayoutsBasic2 setMainValues={setValues} mainValues={values} />
       </Grid>
       {/* <Grid item xs={12} sx={{ pt: theme => `${theme.spacing(4)} !important` }}>
         <FormLayoutsCollapsible />
