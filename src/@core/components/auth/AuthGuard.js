@@ -18,12 +18,19 @@ const AuthGuard = props => {
       }
       if (auth.user === null && !window.localStorage.getItem('userData')) {
         if (router.asPath !== '/') {
-          router.replace({
-            pathname: '/login',
-            query: { returnUrl: router.asPath }
-          })
+          location.replace(process.env.NEXT_PUBLIC_LOGOUT_REDIRECT);
+
+          // router.replace({
+          //   pathname: '/login',
+          //   query: { returnUrl: router.asPath }
+          // })
+
         } else {
-          router.replace('/login')
+
+          // router.replace('/login')
+          
+          location.replace(process.env.NEXT_PUBLIC_LOGOUT_REDIRECT);
+
         }
       }
     },

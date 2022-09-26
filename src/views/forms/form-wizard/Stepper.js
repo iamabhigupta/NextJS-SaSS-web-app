@@ -31,6 +31,8 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Checkbox from '@mui/material/Checkbox';
+import OutlinedInput from '@mui/material/OutlinedInput';
 
 // ** Third Party Imports
 import clsx from 'clsx'
@@ -51,6 +53,31 @@ import Close from 'mdi-material-ui/Close'
 
 // ** Custom Components Imports
 import CustomAvatar from 'src/@core/components/mui/avatar'
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const names = [
+  'Oliver Hansen',
+  'Van Henry',
+  'April Tucker',
+  'Ralph Hubbard',
+  'Omar Alexander',
+  'Carlos Abbott',
+  'Miriam Wagner',
+  'Bradley Wilkerson',
+  'Virginia Andrews',
+  'Kelly Snyder',
+];
 
 const categories = [
   'Restaurants & Hotels',
@@ -114,7 +141,7 @@ const StepperVerticalWithoutNumbers = () => {
       toast.success('Completed All Steps!!')
     }
   }
-
+  
   const handleReset = () => {
     setActiveStep(0)
   }
@@ -204,7 +231,12 @@ const StepperVerticalWithoutNumbers = () => {
   }, [])
 
   const handleChange = categoryName => {
+
+    console.log(gCategory);
+
+    // return false;
     // setCategory(e.target.value)
+
     var sId = ''
     if (storeData.length > 0) {
       sId = storeData[0].id
@@ -218,11 +250,9 @@ const StepperVerticalWithoutNumbers = () => {
       data: {
         query: `
         mutation {
-          productCategoryCreate(data: {
+          productCategoryCreateMultiple(data: {
               store_id: ${sId},
-              name: "${categoryName}",
-              slug: "${categoryName}",
-              status: Active,
+              categories: ${JSON.stringify(gCategory)}
           }) {
               id,
               store_id,
@@ -238,13 +268,30 @@ const StepperVerticalWithoutNumbers = () => {
               created_at,
               updated_at
           }
-      } `
+      }`
       },
       headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
     }).then(result => {
       console.log(result)
     })
   }
+
+  const [personName, setPersonName] = useState([]);
+  const [gCategory, setGCategory] = useState([]);
+
+  const handleCategoryChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+
+    console.log(value);
+    setGCategory(value)    
+    setPersonName(
+
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
 
   return (
 
@@ -323,48 +370,26 @@ const StepperVerticalWithoutNumbers = () => {
               </StepLabel>
               <StepContent>
                 <div>
-                  <TextField
-                    id='outlined-basic'
-                    size='small'
-                    placeholder='Select Category'
-                    onClick={handleClickOpen}
-                    value={category}
-                    onChange={handleChange}
-                  />
-
-                  <Dialog onClose={handleDialogClose} aria-labelledby='simple-dialog-title' open={open}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <DialogTitle id='simple-dialog-title'>Choose business category</DialogTitle>
-                      <div style={{ paddingRight: '30px', cursor: 'pointer' }}>
-                        <Close onClick={handleDialogClose} />
-                      </div>
-                  
-                    </div>
-                    <List sx={{ pt: 0, px: '0 !important' }}>
-                      {categories.map(category => (
-                        <ListItem key={category} disablePadding onClick={() => handleClose(category)}>
-                          <Box
-                            style={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                              paddingRight: '10rem',
-                              width: '100%'
-                            }}
-                          >
-                            <ListItemButton>
-                              <img
-                                src='https://mydukaan.s3.ap-south-1.amazonaws.com/grocery.jpg'
-                                alt=''
-                                style={{ width: 60, height: 60, borderRadius: '3px', marginRight: '12px' }}
-                              />
-                              <ListItemText primary={category} />
-                            </ListItemButton>
-                          </Box>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Dialog>
+                <FormControl sx={{ m: 1, width: 300 }}>
+        <InputLabel id="demo-multiple-checkbox-label">Select Category</InputLabel>
+        <Select
+          labelId="demo-multiple-checkbox-label"
+          id="demo-multiple-checkbox"
+          multiple
+          value={personName}
+          onChange={handleCategoryChange}
+          input={<OutlinedInput label="Select Category" />}
+          renderValue={(selected) => selected.join(', ')}
+          MenuProps={MenuProps}
+        >
+          {categories.map((name) => (
+            <MenuItem key={name} value={name}>
+              <Checkbox checked={personName.indexOf(name) > -1} />
+              <ListItemText primary={name} />
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
                 </div>
 
             
@@ -378,7 +403,7 @@ const StepperVerticalWithoutNumbers = () => {
                   >
                     Back
                   </Button>
-                  <Button size='small' variant='contained' onClick={handleNext} sx={{ ml: 4 }}>
+                  <Button size='small' variant='contained' onClick={() => { handleNext(); handleChange();}} sx={{ ml: 4 }}>
                     {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                   </Button>
                 </div>

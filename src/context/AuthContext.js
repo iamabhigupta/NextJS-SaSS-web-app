@@ -38,15 +38,34 @@ const AuthProvider = ({ children }) => {
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
       if (storedToken) {
         setLoading(true)
-        await axios
-          .get(authConfig.meEndpoint, {
-            headers: {
-              Authorization: storedToken
-            }
-          })
+        await axios({
+          url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+          method: 'post',
+          data: {
+            query: `
+            query {
+              userFindOne(id: 1) {
+                  id,
+                  role_id,
+                  store_id,
+                  name,
+                  phone,
+                  email,
+                  username,
+                  address,
+                  status,
+                  created_at,
+                  updated_at
+              }
+          }
+              `
+          },
+         headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') },
+
+        })
           .then(async response => {
             setLoading(false)
-            setUser({ ...response.data.userData })
+            setUser({ ...response.data.data.userFindOne })
           })
           .catch(() => {
             localStorage.removeItem('userData')
@@ -122,7 +141,9 @@ const AuthProvider = ({ children }) => {
     setIsInitialized(false)
     window.localStorage.removeItem('userData')
     window.localStorage.removeItem(authConfig.storageTokenKeyName)
-    router.push('/login')
+    
+    // router.push('/login')
+    location.replace(process.env.NEXT_PUBLIC_LOGOUT_REDIRECT)
   }
 
   const handleRegister = (params, errorCallback) => {
