@@ -141,7 +141,7 @@ const AuthProvider = ({ children }) => {
     setIsInitialized(false)
     window.localStorage.removeItem('userData')
     window.localStorage.removeItem(authConfig.storageTokenKeyName)
-    
+
     // router.push('/login')
     location.replace(process.env.NEXT_PUBLIC_LOGOUT_REDIRECT)
   }
