@@ -139,7 +139,6 @@ const FormLayoutsBasic2 = ({ setMainValues, mainValues }) => {
         },
         headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
       }).then(result => {
-        console.log(result.data.data.productCategoryFindAllByStore)
         setCategoryw(result.data.data.productCategoryFindAllByStore)
       })
     })
