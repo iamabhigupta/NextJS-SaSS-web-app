@@ -56,6 +56,7 @@ const Settings = () => {
       headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
     }).then(result => {
       setFname(result.data.data.title)
+
       // console.log(result.data.)
       setStoreData(result.data.data.storeFindAllByUser)
     })
@@ -90,6 +91,7 @@ const Settings = () => {
         price: price,
         type: story_id
       })
+      
       // setStoreData(result.data.data.storeFindAllByUser)
     })
   }, [])

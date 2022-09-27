@@ -132,6 +132,7 @@ const Product = () => {
     const handleRedirect = route => {
       router.push(route)
     }
+    
     const handleRowOptionsClose = () => {
       setAnchorEl(null)
     }

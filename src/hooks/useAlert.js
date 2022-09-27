@@ -8,6 +8,7 @@ const style = {
   position: 'absolute',
   top: '20px',
   right: '20px'
+  
   // bgcolor: 'null'
   // transform: 'translate(-50%, -50%)',
   // width: 450,

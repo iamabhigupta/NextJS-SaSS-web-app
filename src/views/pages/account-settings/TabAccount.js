@@ -130,10 +130,12 @@ const TabAccount = () => {
               type='email'
               label='Email'
               value={values['email']}
+
               // placeholder='johnDoe@example.com'
               // defaultValue='johnDoe@example.com'
             />
           </Grid>
+          
           {/*<Grid item xs={12} sm={6}>*/}
           {/*  <FormControl fullWidth>*/}
           {/*    <InputLabel>Role</InputLabel>*/}
