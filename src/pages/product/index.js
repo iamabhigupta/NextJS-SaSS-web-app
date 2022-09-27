@@ -49,6 +49,8 @@ import { fetchData, deleteUser } from 'src/store/apps/user'
 // ** Custom Components Imports
 import TableHeader from 'src/views/apps/user/list/TableHeader'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
+import { ConfirmModal } from '../../layouts/components/ConfirmModal'
+import { useAlert } from '../../hooks/useAlert'
 
 // ** import { rows } from 'src/@fake-db/table/product-list-data'
 
@@ -111,82 +113,129 @@ const MenuItemLink = styled('a')(({ theme }) => ({
   color: theme.palette.text.primary
 }))
 
-const RowOptions = ({ id }) => {
-  // ** Hooks
-  const dispatch = useDispatch()
+const Product = () => {
+  const RowOptions = id => {
+    // ** Hooks
+    const dispatch = useDispatch()
 
-  // ** State
-  const [anchorEl, setAnchorEl] = useState(null)
-  const rowOptionsOpen = Boolean(anchorEl)
+    // ** State
+    const [anchorEl, setAnchorEl] = useState(null)
+    const [confirmModal, setConfirmModal] = useState(false)
+    const [loading, setLoading] = useState(false)
 
-  const handleRowOptionsClick = event => {
-    setAnchorEl(event.currentTarget)
+    const rowOptionsOpen = Boolean(anchorEl)
+
+    const handleRowOptionsClick = event => {
+      setAnchorEl(event.currentTarget)
+    }
+
+    const handleRedirect = route => {
+      router.push(route)
+    }
+    const handleRowOptionsClose = () => {
+      setAnchorEl(null)
+    }
+
+    const handleDelete = () => {
+      setConfirmModal(true)
+      setLoading(true)
+
+      console.log(id)
+      axios({
+        url: process.env.NEXT_PUBLIC_API_ENDPOINT,
+        method: 'post',
+        data: {
+          query: `
+          mutation productDelete{
+        productDelete(id:${id})
+      }`
+        },
+        headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
+      })
+        .then(result => {
+          console.log(result)
+          setConfirmModal(false)
+          setRefreshRows(prevState => !prevState)
+        })
+        .finally(() => {
+          setLoading(false)
+          setRows(prevState => {
+            let result = prevState.filter(elem => elem.id != id)
+
+            return result
+          })
+        })
+      handleRowOptionsClose()
+    }
+    const { handleAddAlert, AlertElement } = useAlert()
+
+    return (
+      <>
+        <IconButton size='small' onClick={handleRowOptionsClick}>
+          <DotsVertical />
+        </IconButton>
+        <Menu
+          keepMounted
+          anchorEl={anchorEl}
+          open={rowOptionsOpen}
+          onClose={handleRowOptionsClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}
+          PaperProps={{ style: { minWidth: '8rem' } }}
+        >
+          <MenuItem sx={{ p: 0 }}>
+            <Link href={`/apps/user/view/${id}`} passHref>
+              <MenuItemLink>
+                <EyeOutline fontSize='small' sx={{ mr: 2 }} />
+                View
+              </MenuItemLink>
+            </Link>
+          </MenuItem>
+          <MenuItem onClick={() => handleRedirect(`/product/update/${id}`)}>
+            <PencilOutline fontSize='small' sx={{ mr: 2 }} />
+            Edit
+          </MenuItem>
+          <MenuItem onClick={() => setConfirmModal(true)}>
+            <DeleteOutline fontSize='small' sx={{ mr: 2 }} />
+            Delete
+          </MenuItem>
+
+          <ConfirmModal
+            title={'Are you sure you want to remove the product?'}
+            open={confirmModal}
+            confirmFunction={() => handleDelete()}
+            cancelFunction={() => setConfirmModal(false)}
+            closeAutomatically={false}
+            loading={loading}
+            handleClose={() => setConfirmModal(false)}
+          />
+        </Menu>
+        {/*{AlertElement}*/}
+      </>
+    )
   }
 
-  const handleRowOptionsClose = () => {
-    setAnchorEl(null)
-  }
+  const columns = [
+    {
+      flex: 0.2,
+      minWidth: 230,
+      field: 'name',
+      headerName: 'Products',
+      renderCell: ({ row }) => {
+        const { id, fullName, username } = row
 
-  const handleDelete = () => {
-    dispatch(deleteUser(id))
-    handleRowOptionsClose()
-  }
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {renderClient(row)}
 
-  return (
-    <>
-      <IconButton size='small' onClick={handleRowOptionsClick}>
-        <DotsVertical />
-      </IconButton>
-      <Menu
-        keepMounted
-        anchorEl={anchorEl}
-        open={rowOptionsOpen}
-        onClose={handleRowOptionsClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right'
-        }}
-        PaperProps={{ style: { minWidth: '8rem' } }}
-      >
-        <MenuItem sx={{ p: 0 }}>
-          <Link href={`/apps/user/view/${id}`} passHref>
-            <MenuItemLink>
-              <EyeOutline fontSize='small' sx={{ mr: 2 }} />
-              View
-            </MenuItemLink>
-          </Link>
-        </MenuItem>
-        <MenuItem onClick={handleRowOptionsClose}>
-          <PencilOutline fontSize='small' sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-        <MenuItem onClick={handleDelete}>
-          <DeleteOutline fontSize='small' sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Menu>
-    </>
-  )
-}
-
-const columns = [
-  {
-    flex: 0.2,
-    minWidth: 230,
-    field: 'name',
-    headerName: 'Products',
-    renderCell: ({ row }) => {
-      const { id, fullName, username } = row
-
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {renderClient(row)}
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-            {/* <Link href={`/apps/user/view/${id}`} passHref>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+              {/* <Link href={`/apps/user/view/${id}`} passHref>
               <Typography
                 noWrap
                 component='a'
@@ -196,87 +245,103 @@ const columns = [
                 {fullName}
               </Typography>
             </Link> */}
-            {/* <Link href={`/apps/user/view/${id}`} passHref> */}
-            <Typography noWrap component='a' variant='caption' sx={{ textDecoration: 'none' }}>
-              {row.title}
-            </Typography>
-            {/* </Link> */}
+              {/* <Link href={`/apps/user/view/${id}`} passHref> */}
+              <Typography noWrap component='a' variant='caption' sx={{ textDecoration: 'none' }}>
+                {row.title}
+              </Typography>
+              {/* </Link> */}
+            </Box>
           </Box>
-        </Box>
-      )
-    }
-  },
-  {
-    flex: 0.2,
-    minWidth: 250,
-    field: 'price',
-    headerName: 'Price',
-    renderCell: ({ row }) => {
-      return (
-        <Typography noWrap variant='body2'>
-          {row.price}
-        </Typography>
-      )
-    }
-  },
-  {
-    flex: 0.15,
-    field: 'role',
-    minWidth: 150,
-    headerName: 'Inventory',
-    renderCell: ({ row }) => {
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {userRoleObj[row.role]}
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.role}
+        )
+      }
+    },
+    {
+      flex: 0.2,
+      minWidth: 250,
+      field: 'price',
+      headerName: 'Price',
+      renderCell: ({ row }) => {
+        return (
+          <Typography noWrap variant='body2'>
+            {row.price}
           </Typography>
-        </Box>
-      )
+        )
+      }
+    },
+    {
+      flex: 0.15,
+      field: 'role',
+      minWidth: 150,
+      headerName: 'Inventory',
+      renderCell: ({ row }) => {
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {userRoleObj[row.role]}
+            <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
+              {row.role}
+            </Typography>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.15,
+      minWidth: 120,
+      headerName: 'Plan',
+      field: 'currentPlan',
+      renderCell: ({ row }) => {
+        return (
+          <Typography variant='subtitle1' noWrap sx={{ textTransform: 'capitalize' }}>
+            {row.currentPlan}
+          </Typography>
+        )
+      }
+    },
+    {
+      flex: 0.1,
+      minWidth: 110,
+      field: 'status',
+      headerName: 'Status',
+      renderCell: ({ row }) => {
+        return (
+          <>
+            <CustomChip
+              skin='light'
+              size='small'
+              label={row.status}
+              color={userStatusObj[row.status]}
+              sx={{ textTransform: 'capitalize', '& .MuiChip-label': { lineHeight: '18px' } }}
+            />
+            <Box sx={{ ml: 2 }}>{RowOptions(row.id)}</Box>
+          </>
+        )
+      }
     }
-  },
-  {
-    flex: 0.15,
-    minWidth: 120,
-    headerName: 'Plan',
-    field: 'currentPlan',
-    renderCell: ({ row }) => {
-      return (
-        <Typography variant='subtitle1' noWrap sx={{ textTransform: 'capitalize' }}>
-          {row.currentPlan}
-        </Typography>
-      )
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: 'status',
-    headerName: 'Status',
-    renderCell: ({ row }) => {
-      return (
-        <CustomChip
-          skin='light'
-          size='small'
-          label={row.status}
-          color={userStatusObj[row.status]}
-          sx={{ textTransform: 'capitalize', '& .MuiChip-label': { lineHeight: '18px' } }}
-        />
-      )
-    }
-  }
 
-  // {
-  //   flex: 0.1,
-  //   minWidth: 90,
-  //   sortable: false,
-  //   field: 'actions',
-  //   headerName: 'Image',
-  //   renderCell: ({ row }) => <RowOptions id={row.id} />
-  // }
-]
+    // {
+    //   flex: 0.1,
+    //   minWidth: 5,
+    //   width:10,
+    //   filterable:false,
+    //   disableColumnMenu:true,
+    //   hideSortIcons:true,
+    //   renderCell: ({ row }) => {
+    //     return (
+    //       RowOptions(row.id)
+    //     )
+    //   }
+    // }
 
-const Product = () => {
+    // {
+    //   flex: 0.1,
+    //   minWidth: 90,
+    //   sortable: false,
+    //   field: 'actions',
+    //   headerName: 'Image',
+    //   renderCell: ({ row }) => <RowOptions id={row.id} />
+    // }
+  ]
+
   // ** State
   const [role, setRole] = useState('')
   const [plan, setPlan] = useState('')
@@ -284,6 +349,8 @@ const Product = () => {
   const [status, setStatus] = useState('')
   const [pageSize, setPageSize] = useState(10)
   const [addUserOpen, setAddUserOpen] = useState(false)
+  const [refreshRows, setRefreshRows] = useState(false)
+
   const router = useRouter()
 
   const [rows, setRows] = useState([])
@@ -371,7 +438,7 @@ const Product = () => {
         }
       })
     })
-  }, [])
+  }, [refreshRows])
 
   // ** Hooks
   const dispatch = useDispatch()

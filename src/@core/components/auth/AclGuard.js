@@ -35,6 +35,7 @@ const AclGuard = props => {
   if (auth.user && auth.user.role && !ability) {
     setAbility(buildAbilityFor(auth.user.role, aclAbilities.subject))
   }
+  console.log('aclAbilities', auth.user)
 
   // Check the access of current user and render pages
   if (ability && ability.can(aclAbilities.action, aclAbilities.subject)) {
