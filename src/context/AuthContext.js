@@ -32,19 +32,24 @@ const AuthProvider = ({ children }) => {
 
   // ** Hooks
   const router = useRouter()
+
+  // ---Token Validation---
   useEffect(() => {
+    const localUser = JSON.parse(`${localStorage.getItem('userData')}`)
+
     const initAuth = async () => {
       setIsInitialized(true)
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
-      if (storedToken) {
+      if (storedToken && localUser?.id) {
         setLoading(true)
+        console.log('token', window.localStorage.getItem('accessToken'))
         await axios({
-          url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+          url: process.env.NEXT_PUBLIC_API_ENDPOINT,
           method: 'post',
           data: {
             query: `
             query {
-              userFindOne(id: 1) {
+              userFindOne(id: ${localUser?.id}) {
                   id,
                   role_id,
                   store_id,
@@ -60,18 +65,30 @@ const AuthProvider = ({ children }) => {
           }
               `
           },
-         headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') },
-
+          headers: { Authorization: 'Bearer ' + window.localStorage.getItem('accessToken') }
         })
           .then(async response => {
-            setLoading(false)
+            if (response.data.errors) {
+              alert('Token is not valid')
+              throw new Error('Token is not valid')
+            }
+
+            console.log(response.data.data.userFindOne)
+            if (response.data.data.userFindOne?.role_id == 6) {
+              response.data.data.userFindOne.role = 'admin'
+            }
             setUser({ ...response.data.data.userFindOne })
+            console.log(response)
           })
-          .catch(() => {
+          .catch(reason => {
+            console.log('catch', reason)
             localStorage.removeItem('userData')
             localStorage.removeItem('refreshToken')
             localStorage.removeItem('accessToken')
+            router.push('/login')
             setUser(null)
+          })
+          .finally(() => {
             setLoading(false)
           })
       } else {
@@ -82,9 +99,9 @@ const AuthProvider = ({ children }) => {
   }, [])
 
   const handleLogin = (params, errorCallback) => {
-   console.log(params)
+    console.log(params)
     axios({
-      url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
+      url: process.env.NEXT_PUBLIC_API_ENDPOINT,
       method: 'post',
       data: {
         query: `
@@ -107,33 +124,35 @@ const AuthProvider = ({ children }) => {
       }
           `
       }
-    }).then((result) => {
-      
-      if(result.data.data.login.user.role_id == 6){
-        result.data.data.login.user.role = 'admin'
-      }
-
-      window.localStorage.setItem(authConfig.storageTokenKeyName, result.data.data.login.token)
-      console.log(result.data)
-      axios
-      .get( process.env.NEXT_PUBLIC_API_ENDPOINT , {
-        headers: {
-          Authorization: window.localStorage.getItem(authConfig.storageTokenKeyName)
-        }
-      })
-   
-      // const returnUrl = router.query.returnUrl
-     
-     setUser({ ...result.data.data.login.user })
-      window.localStorage.setItem('userData', JSON.stringify(result.data.data.login.user))
-   
-      // const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-    
-      router.push('/dashboard')
-      
-    }).catch(err => {
-      if (errorCallback) errorCallback(err)
     })
+      .then(result => {
+        console.log(result.data.data.login)
+        if (result.data.data.login.user.role_id == 6) {
+          result.data.data.login.user.role = 'admin'
+        }
+
+        window.localStorage.setItem(authConfig.storageTokenKeyName, result.data.data.login.token)
+        console.log(result.data)
+
+        // axios
+        // .get( process.env.NEXT_PUBLIC_API_ENDPOINT , {
+        //   headers: {
+        //     Authorization: window.localStorage.getItem(authConfig.storageTokenKeyName)
+        //   }
+        // })
+
+        // const returnUrl = router.query.returnUrl
+
+        setUser({ ...result.data.data.login.user })
+        window.localStorage.setItem('userData', JSON.stringify(result.data.data.login.user))
+
+        // const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+
+        router.push('/dashboard')
+      })
+      .catch(err => {
+        if (errorCallback) errorCallback(err)
+      })
   }
 
   const handleLogout = () => {
@@ -142,13 +161,13 @@ const AuthProvider = ({ children }) => {
     window.localStorage.removeItem('userData')
     window.localStorage.removeItem(authConfig.storageTokenKeyName)
 
-    // router.push('/login')
+    router.push('/login')
     location.replace(process.env.NEXT_PUBLIC_LOGOUT_REDIRECT)
   }
 
   const handleRegister = (params, errorCallback) => {
     axios
-      .post( process.env.NEXT_PUBLIC_API_ENDPOINT , {
+      .post(process.env.NEXT_PUBLIC_API_ENDPOINT, {
         query: `
         mutation {
           userCreate(data: {
