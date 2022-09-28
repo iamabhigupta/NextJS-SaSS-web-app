@@ -1,9 +1,10 @@
 // ** React Imports
-import { useState,useEffect, forwardRef ,useCallback} from 'react'
+import { useState, useEffect, forwardRef, useCallback } from 'react'
 import axios from 'axios'
-import ReactDOM from "react-dom";
-import EditableTable from "../../../pages/category/EditableTable";
-import fieldsArr from "../../../pages/category/fields";
+import ReactDOM from 'react-dom'
+import EditableTable from '../../../pages/category/EditableTable'
+import fieldsArr from '../../../pages/category/fields'
+
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -38,15 +39,16 @@ import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
 import FileUploaderMultiple from '../form-elements/file-uploader/FileUploaderMultiple'
+import AddDeleteTableRows from 'src/pages/category/AddDeleteTableRows'
 
 const defaultData = [
   {
-    key: "key",
-    value: "value",
+    key: 'key',
+    value: 'value'
   }
-];
+]
 
-const NewCategory = ({formData, setFormData}) => {
+const NewCategory = ({ formData, setFormData }) => {
   // ** States
   const [values, setValues] = useState({
     password: '',
@@ -79,14 +81,14 @@ const NewCategory = ({formData, setFormData}) => {
     event.preventDefault()
   }
 
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([])
 
   // useEffect(() => {
 
   //   axios({
   //     url:  process.env.NEXT_PUBLIC_API_ENDPOINT ,
   //     method: 'post',
-  //     data:{   
+  //     data:{
   //   query: `
   //   query {
   //     storeFindAll {
@@ -98,22 +100,20 @@ const NewCategory = ({formData, setFormData}) => {
   //         created_at,
   //         updated_at
   //     }
-  // }`    
+  // }`
   //   },
   //   headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
-  //     }).then((result) => {      
+  //     }).then((result) => {
   //       console.log(result.data.data.storeFindAll)
   //       setRows(result.data.data.storeFindAll)
 
   //   })
-  
-  
+
   // }, []);
 
-  
   const getData = row => {
-    console.log(row, "rows data");
-  };
+    console.log(row, 'rows data')
+  }
 
   return (
     <Card>
@@ -123,23 +123,30 @@ const NewCategory = ({formData, setFormData}) => {
           <Grid container spacing={5}>
             <Grid item xs={12}>
               <Typography sx={{ mb: 2, fontWeight: 500 }}>Category Name</Typography>
-              <TextField autoComplete='off' fullWidth placeholder='Enter Category name'
-               name="name"
-               onChange={(event) =>
-                setFormData({ ...formData, name: event.target.value })
-              } />
+              <TextField
+                autoComplete='off'
+                fullWidth
+                placeholder='Enter Category name'
+                name='name'
+                onChange={event => setFormData({ ...formData, name: event.target.value })}
+              />
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
+              <CardHeader title='Attributes' titleTypographyProps={{ variant: 'h6' }} />
 
-      <CardHeader title='Attributes' titleTypographyProps={{ variant: 'h6' }} />
- 
-      <EditableTable
-        initWithoutHead
-        defaultData={defaultData}
-        getData={getData}
-        fieldsArr={fieldsArr}
-      />
+              <EditableTable initWithoutHead defaultData={defaultData} getData={getData} fieldsArr={fieldsArr} />
+            </Grid> */}
           </Grid>
+        </form>
+      </CardContent>
+      <CardHeader title='Attributes' titleTypographyProps={{ variant: 'h6' }} />
+      <CardContent>
+        <form onSubmit={e => e.preventDefault()}>
+          <Grid container spacing={5}>
+            <Grid item xs={12}>
+              <AddDeleteTableRows />
+              {/* <EditableTable initWithoutHead defaultData={defaultData} getData={getData} fieldsArr={fieldsArr} /> */}
+            </Grid>
           </Grid>
         </form>
       </CardContent>

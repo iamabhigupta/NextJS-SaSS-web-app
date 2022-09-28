@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 import {
   Table,
   TableRow,
@@ -11,86 +11,52 @@ import {
   MenuItem,
   Select,
   withStyles
-} from "@material-ui/core";
-import classNames from "classnames";
+} from '@material-ui/core'
+import classNames from 'classnames'
 
-const Input = ({
-  name,
-  error,
-  validation,
-  childHasError,
-  columnDataArr,
-  value,
-  classes,
-  tableName,
-  ...props
-}) => {
-  const [hasError, setError] = useState(false);
+const Input = ({ name, error, validation, childHasError, columnDataArr, value, classes, tableName, ...props }) => {
+  const [hasError, setError] = useState(false)
+
   const handleOnChange = e => {
-    const hasError = validation(e, columnDataArr);
+    const hasError = validation(e, columnDataArr)
     if (!hasError) {
-      childHasError(true);
-      setError(true);
+      childHasError(true)
+      setError(true)
     } else {
-      childHasError(false);
-      setError(false);
+      childHasError(false)
+      setError(false)
     }
-    props.onChange(e);
-  };
+    props.onChange(e)
+  }
 
   return (
     <>
-      <div
-        className={classNames(
-          classes.inputWrapperDiv,
-          `inputWrapperDiv${tableName}`
-        )}
-      >
+      <div className={classNames(classes.inputWrapperDiv, `inputWrapperDiv${tableName}`)}>
         <input
           className={classNames(classes.input, `input${tableName}`)}
           name={name}
-          value={value || ""}
+          value={value || ''}
           onChange={handleOnChange}
         />
-        <p className={classNames(classes.error, `error${tableName}`)}>
-          {hasError && error}
-        </p>
+        <p className={classNames(classes.error, `error${tableName}`)}>{hasError && error}</p>
       </div>
     </>
-  );
-};
+  )
+}
 
-const OurSelect = ({
-  name,
-  value,
-  selectMessage,
-  options,
-  classes,
-  tableName,
-  ...props
-}) => {
+const OurSelect = ({ name, value, selectMessage, options, classes, tableName, ...props }) => {
   const handleSelect = e => {
-    props.onChange(e);
-  };
+    props.onChange(e)
+  }
+
   return (
-    <FormControl
-      className={classNames(
-        classes.selectFormControl,
-        `selectFormControl_${tableName}`
-      )}
-    >
-      <InputLabel
-        className={classNames(
-          classes.selectInputLabel,
-          `selectInputLabel_${tableName}`
-        )}
-        htmlFor={name}
-      >
+    <FormControl className={classNames(classes.selectFormControl, `selectFormControl_${tableName}`)}>
+      <InputLabel className={classNames(classes.selectInputLabel, `selectInputLabel_${tableName}`)} htmlFor={name}>
         {selectMessage}
       </InputLabel>
       <Select
         className={classNames(classes.select, `select_${tableName}`)}
-        value={value || ""}
+        value={value || ''}
         onChange={handleSelect}
         inputProps={{
           name: name,
@@ -100,21 +66,19 @@ const OurSelect = ({
         {(options || []).map(item => {
           return (
             <MenuItem
-              className={classNames(
-                classes.selectMenuItem,
-                `selectMenutItem_${tableName}`
-              )}
+              className={classNames(classes.selectMenuItem, `selectMenutItem_${tableName}`)}
               key={item.value}
               value={item.value}
             >
               {item.label}
             </MenuItem>
-          );
+          )
         })}
       </Select>
     </FormControl>
-  );
-};
+  )
+}
+
 const EditableRow = ({
   fieldsArr = [],
   editData = {},
@@ -127,44 +91,39 @@ const EditableRow = ({
   inputClasses,
   ...props
 }) => {
-  let initializeObj = {};
+  let initializeObj = {}
   fieldsArr.forEach(item => {
-    initializeObj[item.name] = "";
-  });
-  const [rowHasError, setRowHasError] = useState(false);
-  const [rowData, setRowData] = useState(
-    editData ? Object.assign({}, initializeObj, editData) : initializeObj
-  );
+    initializeObj[item.name] = ''
+  })
+  const [rowHasError, setRowHasError] = useState(false)
+
+  const [rowData, setRowData] = useState(editData ? Object.assign({}, initializeObj, editData) : initializeObj)
+
   const handleSave = () => {
-    props.handleSave(rowData);
-  };
+    props.handleSave(rowData)
+  }
+
   const handleOnChange = e => {
     const updatedData = Object.assign({}, rowData, {
       [e.target.name]: e.target.value
-    });
-    setRowData(updatedData);
-  };
+    })
+    setRowData(updatedData)
+  }
+
   const handleCancel = () => {
     if (isEditing) {
-      props.handleCancel(editingIndex);
+      props.handleCancel(editingIndex)
     } else {
-      props.handleCancel();
+      props.handleCancel()
     }
-  };
+  }
+
   return (
-    <TableRow
-      className={classNames(classes.tableBodyRow, `tableBodyRow_${tableName}`)}
-    >
+    <TableRow className={classNames(classes.tableBodyRow, `tableBodyRow_${tableName}`)}>
       {fieldsArr.map((item, i) => {
         return (
-          <TableCell
-            className={classNames(
-              classes.tableBodyCell,
-              `tableBodyCell_${tableName}`
-            )}
-            key={i}
-          >
-            {item.type === "select" ? (
+          <TableCell className={classNames(classes.tableBodyCell, `tableBodyCell_${tableName}`)} key={i}>
+            {item.type === 'select' ? (
               <OurSelect
                 tableName={tableName}
                 classes={{
@@ -181,9 +140,7 @@ const EditableRow = ({
               />
             ) : (
               <Input
-                columnDataArr={(allRowsData || []).map(
-                  obj => obj.rowData[item.name]
-                )}
+                columnDataArr={(allRowsData || []).map(obj => obj.rowData[item.name])}
                 tableName={tableName}
                 classes={{ ...inputClasses }}
                 type={item.type}
@@ -197,65 +154,36 @@ const EditableRow = ({
               />
             )}
           </TableCell>
-        );
+        )
       })}
-      <TableCell
-        className={classNames(
-          classes.tableBodyCell,
-          `tableBodyCell_${tableName}`
-        )}
-      >
+      <TableCell className={classNames(classes.tableBodyCell, `tableBodyCell_${tableName}`)}>
         <Button
           className={classNames(classes.saveBtn, `saveBtn${tableName}`)}
           disabled={rowHasError}
-          type="button"
+          type='button'
           onClick={handleSave}
         >
           Save
         </Button>
 
-        <Button
-          className={classNames(classes.cancelBtn, `cancelBtn${tableName}`)}
-          onClick={handleCancel}
-        >
+        <Button className={classNames(classes.cancelBtn, `cancelBtn${tableName}`)} onClick={handleCancel}>
           Cancel
         </Button>
       </TableCell>
     </TableRow>
-  );
-};
+  )
+}
 
-const Row = ({
-  data,
-  handleEditRow,
-  classes,
-  tableName,
-  handleDeleteRow,
-  isAdding,
-  isEditing
-}) => {
+const Row = ({ data, handleEditRow, classes, tableName, handleDeleteRow, isAdding, isEditing }) => {
   return (
-    <TableRow
-      className={classNames(classes.tableBodyRow, `tableBodyRow_${tableName}`)}
-    >
+    <TableRow className={classNames(classes.tableBodyRow, `tableBodyRow_${tableName}`)}>
       {Object.keys(data).map(key => {
         return (
-          <TableCell
-            className={classNames(
-              classes.tableBodyCell,
-              `tableBodyCell_${tableName}`
-            )}
-          >
-            {data[key]}
-          </TableCell>
-        );
+          // eslint-disable-next-line react/jsx-key
+          <TableCell className={classNames(classes.tableBodyCell, `tableBodyCell_${tableName}`)}>{data[key]}</TableCell>
+        )
       })}
-      <TableCell
-        className={classNames(
-          classes.tableBodyCell,
-          `tableBodyCell_${tableName}`
-        )}
-      >
+      <TableCell className={classNames(classes.tableBodyCell, `tableBodyCell_${tableName}`)}>
         <Button
           disabled={isAdding || isEditing}
           className={classNames(classes.editBtn, `editBtn_${tableName}`)}
@@ -273,8 +201,8 @@ const Row = ({
         </Button>
       </TableCell>
     </TableRow>
-  );
-};
+  )
+}
 
 class EditableTable extends React.Component {
   state = {
@@ -285,7 +213,7 @@ class EditableTable extends React.Component {
     isAdding: false,
     isEditing: false,
     editingIndex: null
-  };
+  }
 
   handleSave = row => {
     if (this.state.isEditing) {
@@ -294,32 +222,24 @@ class EditableTable extends React.Component {
           return {
             isEditing: false,
             rowData: row
-          };
-        } else return item;
-      });
-      this.setState(
-        { allRowsData: arr, editingIndex: null, isEditing: false },
-        this.setToParent
-      );
+          }
+        } else return item
+      })
+      this.setState({ allRowsData: arr, editingIndex: null, isEditing: false }, this.setToParent)
     } else {
       this.setState(
         {
-          allRowsData: [
-            ...this.state.allRowsData,
-            { isEditing: false, rowData: row }
-          ],
+          allRowsData: [...this.state.allRowsData, { isEditing: false, rowData: row }],
           isAdding: false
         },
         this.setToParent
-      );
+      )
     }
-  };
+  }
   setToParent = () => {
-    const formatedData = this.state.allRowsData.map(
-      ({ rowData }, i) => rowData
-    );
-    this.props.getData(formatedData);
-  };
+    const formatedData = this.state.allRowsData.map(({ rowData }, i) => rowData)
+    this.props.getData(formatedData)
+  }
   handleCancel = index => {
     if (this.state.isEditing) {
       const arr = this.state.allRowsData.map((item, i) => {
@@ -327,62 +247,52 @@ class EditableTable extends React.Component {
           return {
             isEditing: false,
             rowData: item.rowData
-          };
-        } else return item;
-      });
-      this.setState({ allRowsData: arr, editingIndex: null, isEditing: false });
+          }
+        } else return item
+      })
+      this.setState({ allRowsData: arr, editingIndex: null, isEditing: false })
     } else {
-      this.setState({ isAdding: false });
+      this.setState({ isAdding: false })
     }
-  };
+  }
 
   handleDeleteRow = index => {
-    const arr = this.state.allRowsData.filter((item, i) => i !== index);
+    const arr = this.state.allRowsData.filter((item, i) => i !== index)
     this.setState(
       {
         allRowsData: arr
       },
       this.setToParent
-    );
-  };
+    )
+  }
   handleEditRow = index => {
     const arr = this.state.allRowsData.map((item, i) => {
       if (i === index) {
         return {
           isEditing: true,
           rowData: item.rowData
-        };
-      } else return item;
-    });
-    this.setState({ allRowsData: arr, editingIndex: index, isEditing: true });
-  };
+        }
+      } else return item
+    })
+    this.setState({ allRowsData: arr, editingIndex: index, isEditing: true })
+  }
 
   render() {
-    const {
-      fieldsArr = [],
-      classes = {},
-      tableName,
-      addRowBtnText,
-      initWithoutHead
-    } = this.props;
-    const { allRowsData = [], isAdding, editingIndex, isEditing } = this.state;
+    const { fieldsArr = [], classes = {}, tableName, addRowBtnText, initWithoutHead } = this.props
+    const { allRowsData = [], isAdding, editingIndex, isEditing } = this.state
+
     let headRow = [
       ...fieldsArr.map(item => ({ label: item.label, name: item.name })),
-      { label: "Actions", name: "actions" }
-    ];
-    const showHeader =
-      initWithoutHead && !allRowsData.length && !isAdding ? false : true;
+      { label: 'Actions', name: 'actions' }
+    ]
+    const showHeader = initWithoutHead && !allRowsData.length && !isAdding ? false : true
+
     return (
       <>
-        <Table className={classNames(classes.table, `table_${tableName}`)}>
+        {/* <Table className={classNames(classes.table, `table_${tableName}`)}>
           {showHeader && (
             <TableHead className={classNames(classes.tableHead)}>
-              <TableRow
-                className={classNames(
-                  classes.tableHeadRow,
-                  `tableHeadRow_${tableName}`
-                )}
-              >
+              <TableRow className={classNames(classes.tableHeadRow, `tableHeadRow_${tableName}`)}>
                 {headRow.map(({ label, name }, i) => (
                   <TableCell
                     className={classNames(
@@ -398,9 +308,7 @@ class EditableTable extends React.Component {
               </TableRow>
             </TableHead>
           )}
-          <TableBody
-            className={classNames(classes.tableBody, `tableBody_${tableName}`)}
-          >
+          <TableBody className={classNames(classes.tableBody, `tableBody_${tableName}`)}>
             {!!allRowsData.length &&
               allRowsData.map(({ isEditing, rowData }, i) => {
                 return isEditing ? (
@@ -449,7 +357,7 @@ class EditableTable extends React.Component {
                     handleDeleteRow={() => this.handleDeleteRow(i)}
                     data={rowData}
                   />
-                );
+                )
               })}
             {isAdding && (
               <EditableRow
@@ -479,18 +387,22 @@ class EditableTable extends React.Component {
               />
             )}
           </TableBody>
-        </Table>
-        <div>
+        </Table> */}
+        {/* <div>
           <Button
+            type='button'
+            color='erroe'
+            variant='contained'
+            size='large'
             className={classNames(classes.addBtn, `addBtn_${tableName}`)}
             disabled={isAdding || isEditing}
             onClick={() => this.setState({ isAdding: true })}
           >
-            {addRowBtnText || "Add Row"}
+            {addRowBtnText || 'Add Row'}
           </Button>
-        </div>
+        </div> */}
       </>
-    );
+    )
   }
 }
 
@@ -514,6 +426,6 @@ const styles = () => ({
   addBtn: {},
   deleteBtn: {},
   editBtn: {}
-});
+})
 
-export default withStyles(styles)(EditableTable);
+export default withStyles(styles)(EditableTable)
