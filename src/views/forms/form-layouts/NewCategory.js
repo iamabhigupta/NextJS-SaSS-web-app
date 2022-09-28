@@ -1,7 +1,9 @@
 // ** React Imports
 import { useState,useEffect, forwardRef ,useCallback} from 'react'
 import axios from 'axios'
-
+import ReactDOM from "react-dom";
+import EditableTable from "../../../pages/category/EditableTable";
+import fieldsArr from "../../../pages/category/fields";
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -36,6 +38,13 @@ import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
 import FileUploaderMultiple from '../form-elements/file-uploader/FileUploaderMultiple'
+
+const defaultData = [
+  {
+    key: "key",
+    value: "value",
+  }
+];
 
 const NewCategory = ({formData, setFormData}) => {
   // ** States
@@ -101,6 +110,11 @@ const NewCategory = ({formData, setFormData}) => {
   
   // }, []);
 
+  
+  const getData = row => {
+    console.log(row, "rows data");
+  };
+
   return (
     <Card>
       <CardHeader title='New Category' titleTypographyProps={{ variant: 'h6' }} />
@@ -115,38 +129,17 @@ const NewCategory = ({formData, setFormData}) => {
                 setFormData({ ...formData, name: event.target.value })
               } />
             </Grid>
+            <Grid item xs={12}>
 
-            {/* <Grid item xs={6}>
-                <Typography sx={{ mb: 2, fontWeight: 500 }}>Store</Typography>
-                <FormControl fullWidth>
-                  <Select defaultValue='' displayEmpty inputProps={{ 'aria-label': 'Without label' }}
-                     name="store_id"
-                     onChange={(event) =>
-                      setFormData({ ...formData, store_id: event.target.value })
-                    }
-                  >
-                    <MenuItem value=''>
-                      <em>Select store ..</em>
-                    </MenuItem>
-                    {rows.map(data => {
-                    return (
-                    <MenuItem value={data.id} key={data.id}>{data.name}</MenuItem>                 
-                    )
-                    })}
-                  </Select>
-                 
-                </FormControl>
-              </Grid> */}
-
-
-            {/* <Grid item xs={12}>
-              <Typography sx={{ mb: 2, fontWeight: 500 }}>Category Image</Typography>
-              <DropzoneWrapper>
-                <Grid item xs={12}>
-                  <FileUploaderMultiple />
-                </Grid>
-              </DropzoneWrapper>
-            </Grid> */}
+      <CardHeader title='Attributes' titleTypographyProps={{ variant: 'h6' }} />
+ 
+      <EditableTable
+        initWithoutHead
+        defaultData={defaultData}
+        getData={getData}
+        fieldsArr={fieldsArr}
+      />
+          </Grid>
           </Grid>
         </form>
       </CardContent>
