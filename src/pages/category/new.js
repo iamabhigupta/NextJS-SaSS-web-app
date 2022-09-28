@@ -108,7 +108,6 @@ const New = () => {
           position: toast.POSITION.TOP_RIGHT
       });
 
-      setFormData({ ...formData, isCreated: "Y" })
       setFormData({ ...formData, cId: result.data.data.productCategoryCreate.id })
 
       setTimeout(

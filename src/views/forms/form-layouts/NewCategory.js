@@ -1,9 +1,6 @@
 // ** React Imports
 import { useState, useEffect, forwardRef, useCallback } from 'react'
 import axios from 'axios'
-import ReactDOM from 'react-dom'
-import EditableTable from '../../../pages/category/EditableTable'
-import fieldsArr from '../../../pages/category/fields'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
