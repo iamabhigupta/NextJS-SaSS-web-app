@@ -111,9 +111,6 @@ const NewCategory = ({ formData, setFormData }) => {
 
   // }, []);
 
-  const getData = row => {
-    console.log(row, 'rows data')
-  }
 
   return (
     <Card>
@@ -131,11 +128,7 @@ const NewCategory = ({ formData, setFormData }) => {
                 onChange={event => setFormData({ ...formData, name: event.target.value })}
               />
             </Grid>
-            {/* <Grid item xs={12}>
-              <CardHeader title='Attributes' titleTypographyProps={{ variant: 'h6' }} />
-
-              <EditableTable initWithoutHead defaultData={defaultData} getData={getData} fieldsArr={fieldsArr} />
-            </Grid> */}
+          
           </Grid>
         </form>
       </CardContent>
@@ -144,8 +137,7 @@ const NewCategory = ({ formData, setFormData }) => {
         <form onSubmit={e => e.preventDefault()}>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <AddDeleteTableRows />
-              {/* <EditableTable initWithoutHead defaultData={defaultData} getData={getData} fieldsArr={fieldsArr} /> */}
+              <AddDeleteTableRows cdata={formData}/>
             </Grid>
           </Grid>
         </form>

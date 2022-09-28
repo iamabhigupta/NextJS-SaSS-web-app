@@ -18,9 +18,11 @@ const New = () => {
   const router = useRouter()
   
   const [formData, setFormData] = useState({
+    cId: "",
     name: "",
     slug: "",
     store_id:"",
+    isCreated:"",
     status: "Active",
   });
 
@@ -53,8 +55,8 @@ const New = () => {
     },
     headers: { Authorization: 'Bearer '+window.localStorage.getItem('accessToken') }
       }).then((result) => {      
-        console.log(result.data.data.productCategoryCreate)
-        setStoreData(result.data.data.productCategoryCreate)  
+        console.log(result.data.data.storeFindAllByUser)
+        setStoreData(result.data.data.storeFindAllByUser)  
 
     })
 
@@ -106,6 +108,8 @@ const New = () => {
           position: toast.POSITION.TOP_RIGHT
       });
 
+      setFormData({ ...formData, isCreated: "Y" })
+      setFormData({ ...formData, cId: result.data.data.productCategoryCreate.id })
 
       setTimeout(
         () => router.push('/category')

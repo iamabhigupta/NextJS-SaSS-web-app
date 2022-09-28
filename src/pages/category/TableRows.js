@@ -11,7 +11,7 @@ import Button from '@mui/material/Button'
 
 function TableRows({ rowsData, deleteTableRows, handleChange }) {
   return rowsData.map((data, index) => {
-    const { fullName, emailAddress, salary } = data
+    const { key, value, salary } = data
 
     return (
       <>
@@ -23,9 +23,9 @@ function TableRows({ rowsData, deleteTableRows, handleChange }) {
                 sx={{ width: '100%' }}
                 placeholder='Enter Key'
                 type='text'
-                value={emailAddress}
+                value={value}
                 onChange={evnt => handleChange(index, evnt)}
-                name='emailAddress'
+                name='value'
               />
             </TableCell>
 
@@ -35,9 +35,9 @@ function TableRows({ rowsData, deleteTableRows, handleChange }) {
                 sx={{ width: '100%' }}
                 placeholder='Enter Value'
                 type='text'
-                value={fullName}
+                value={key}
                 onChange={evnt => handleChange(index, evnt)}
-                name='fullName'
+                name='key'
               />
             </TableCell>
 
