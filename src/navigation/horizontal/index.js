@@ -93,7 +93,7 @@ const navigation = () => [
   {
     title: 'Dashboard 2',
     icon: EmailOutline,
-    path: '/second-page'
+    path: '/dashboard2'
   }
 ]
 

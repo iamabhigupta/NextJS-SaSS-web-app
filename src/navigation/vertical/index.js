@@ -38,7 +38,7 @@ const navigation = () => {
         }
       ]
     },
-  
+
     // {
     //   title: 'Store',
     //   icon: Store,
@@ -53,7 +53,7 @@ const navigation = () => {
     //     }
     //   ]
     // },
-    
+
     {
       title: 'Product',
       icon: Cube,
@@ -76,7 +76,7 @@ const navigation = () => {
         }
       ]
     },
-    
+
     {
       title: 'Customers',
       icon: AccountSupervisor,
@@ -105,7 +105,7 @@ const navigation = () => {
     {
       title: 'Dashboard 2',
       icon: EmailOutline,
-      path: '/second-page'
+      path: '/dashboard2'
     }
   ]
 }
